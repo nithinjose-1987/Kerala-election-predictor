@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>Kerala Election Predictor 2026</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f4f6f8;--sur:#fff;--sur2:#f0f2f4;
+  --bd:#e0e4e8;--bd2:#c8cdd4;
+  --tx:#1a2332;--tx2:#5a6475;--tx3:#9aa0aa;
+  --ldf:#cc0000;--ldf-bg:#fff0f0;--ldf-bd:#ffb3b0;
+  --udf:#0057e7;--udf-bg:#f0f4ff;--udf-bd:#b3c8ff;
+  --nda:#ff6600;--nda-bg:#fff4ee;--nda-bd:#ffc299;
+  --oth:#6b21a8;--oth-bg:#f5f0ff;--oth-bd:#d8b4fe;
+  --grn:#16a34a;--grn-bg:#f0fdf4;--grn-bd:#86efac;
+  --r:8px;--rl:12px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100vh;-webkit-tap-highlight-color:transparent}
+#root{padding-bottom:20px}
+.topbar{background:linear-gradient(135deg,#991b1b,#1e3a8a);color:#fff;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.topbar-title{font-size:16px;font-weight:600}
+.topbar-sub{font-size:10px;opacity:.75;margin-top:1px}
+.ubadge{font-size:12px;background:rgba(255,255,255,.2);padding:3px 9px;border-radius:20px}
+.lbtn{font-size:12px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:3px 9px;border-radius:20px;cursor:pointer;font-family:var(--font);min-height:30px}
+.tabs{display:flex;background:var(--sur);border-bottom:1px solid var(--bd);position:sticky;top:52px;z-index:99;overflow-x:auto}
+.tab{padding:11px 10px;text-align:center;font-size:12px;font-weight:500;color:var(--tx2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0}
+.tab.active{color:var(--ldf);border-bottom-color:var(--ldf)}
+
+/* AUTH */
+.awrap{max-width:360px;margin:3rem auto;padding:0 1rem}
+.acard{background:var(--sur);border:1px solid var(--bd);border-radius:var(--rl);padding:1.75rem}
+.alogo{text-align:center;margin-bottom:1.5rem}
+.alogo h1{font-size:21px;font-weight:700}
+.alogo p{font-size:13px;color:var(--tx2);margin-top:4px}
+.atabs{display:flex;border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;margin-bottom:1.25rem}
+.atab{flex:1;padding:9px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;color:var(--tx2);background:var(--sur);border:none;font-family:var(--font)}
+.atab.on{background:var(--ldf);color:#fff}
+.fld{margin-bottom:11px}
+.fld label{display:block;font-size:12px;color:var(--tx2);margin-bottom:4px;font-weight:500}
+.fld input{width:100%;padding:9px 11px;border:1px solid var(--bd2);border-radius:var(--r);font-size:15px;font-family:var(--font);background:var(--sur);color:var(--tx);outline:none;min-height:44px}
+.fld input:focus{border-color:#1d4ed8}
+.abtn{width:100%;padding:11px;background:linear-gradient(135deg,#991b1b,#1e3a8a);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:600;font-family:var(--font);cursor:pointer;min-height:44px}
+.aerr{font-size:13px;color:#dc2626;background:#fff0f0;border:1px solid #fca5a5;border-radius:var(--r);padding:8px 11px;margin-top:9px;display:none}
+
+/* PREDICT TAB */
+.pwrap{padding:.75rem}
+.prog-card{background:var(--sur);border:1px solid var(--bd);border-radius:var(--rl);padding:1rem;margin-bottom:.75rem}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.prog-lbl{font-size:13px;font-weight:600}
+.prog-cnt{font-size:13px;font-weight:700;color:var(--grn)}
+.pbar{height:9px;background:var(--bd);border-radius:5px;overflow:hidden}
+.pbar-f{height:100%;background:linear-gradient(90deg,#15803d,#22c55e);border-radius:5px;transition:width .3s}
+.tally{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.tally-item{text-align:center;padding:6px 4px;border-radius:var(--r);border:1px solid}
+.tally-ldf{background:var(--ldf-bg);border-color:var(--ldf-bd)}
+.tally-udf{background:var(--udf-bg);border-color:var(--udf-bd)}
+.tally-nda{background:var(--nda-bg);border-color:var(--nda-bd)}
+.tally-oth{background:var(--oth-bg);border-color:var(--oth-bd)}
+.tally-lbl{font-size:10px;font-weight:700;letter-spacing:.04em}
+.tally-ldf .tally-lbl{color:var(--ldf)}
+.tally-udf .tally-lbl{color:var(--udf)}
+.tally-nda .tally-lbl{color:var(--nda)}
+.tally-oth .tally-lbl{color:var(--oth)}
+.tally-num{font-size:20px;font-weight:700;line-height:1.2}
+.tally-ldf .tally-num{color:var(--ldf)}
+.tally-udf .tally-num{color:var(--udf)}
+.tally-nda .tally-num{color:var(--nda)}
+.tally-oth .tally-num{color:var(--oth)}
+
+.dist-hdr{font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:.08em;text-transform:uppercase;background:var(--sur2);border-radius:var(--r) var(--r) 0 0;padding:7px 10px;border:1px solid var(--bd);border-bottom:none;margin-top:.75rem}
+.const-row{display:flex;align-items:center;gap:6px;padding:8px 10px;background:var(--sur);border:1px solid var(--bd);border-top:none;flex-wrap:wrap}
+.const-row:last-child{border-radius:0 0 var(--r) var(--r)}
+.cnum{font-size:11px;color:var(--tx3);width:22px;flex-shrink:0;font-weight:500}
+.cinfo{flex:1;min-width:0}
+.cname{font-size:13px;font-weight:500;color:var(--tx)}
+.cmla{font-size:11px;color:var(--tx2);margin-top:1px}
+.cmla-party{font-size:10px;font-weight:600;padding:1px 5px;border-radius:4px;margin-left:4px}
+.mla-ldf{background:var(--ldf-bg);color:var(--ldf)}
+.mla-udf{background:var(--udf-bg);color:var(--udf)}
+.mla-nda{background:var(--nda-bg);color:var(--nda)}
+.mla-oth{background:var(--oth-bg);color:var(--oth)}
+.pbtns{display:flex;gap:3px;flex-shrink:0}
+.pbtn{padding:5px 7px;border-radius:6px;font-size:11px;font-weight:600;border:1.5px solid;cursor:pointer;font-family:var(--font);min-height:32px;min-width:38px;touch-action:manipulation}
+.pbtn-ldf{border-color:var(--ldf-bd);color:var(--ldf);background:var(--sur)}
+.pbtn-ldf.sel{background:var(--ldf);color:#fff;border-color:var(--ldf)}
+.pbtn-udf{border-color:var(--udf-bd);color:var(--udf);background:var(--sur)}
+.pbtn-udf.sel{background:var(--udf);color:#fff;border-color:var(--udf)}
+.pbtn-nda{border-color:var(--nda-bd);color:var(--nda);background:var(--sur)}
+.pbtn-nda.sel{background:var(--nda);color:#fff;border-color:var(--nda)}
+.pbtn-oth{border-color:var(--oth-bd);color:var(--oth);background:var(--sur)}
+.pbtn-oth.sel{background:var(--oth);color:#fff;border-color:var(--oth)}
+.pbtn:active{transform:scale(.93)}
+.sind{font-size:10px;color:var(--tx3);width:16px;text-align:right}
+
+/* ALL PREDICTIONS TAB */
+.apwrap{padding:.75rem}
+.player-list{display:flex;flex-direction:column;gap:6px;margin-bottom:.75rem}
+.player-card{background:var(--sur);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden}
+.player-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;gap:8px;flex-wrap:wrap}
+.player-hdr:active{background:var(--sur2)}
+.player-name{font-size:14px;font-weight:600;color:var(--tx)}
+.player-pills{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
+.ppill{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px}
+.ppill-ldf{background:var(--ldf-bg);color:var(--ldf)}
+.ppill-udf{background:var(--udf-bg);color:var(--udf)}
+.ppill-nda{background:var(--nda-bg);color:var(--nda)}
+.ppill-oth{background:var(--oth-bg);color:var(--oth)}
+.player-detail{display:none;overflow-x:auto;border-top:1px solid var(--bd)}
+.player-detail.open{display:block}
+.dtbl{width:100%;border-collapse:collapse;font-size:12px}
+.dtbl th{padding:7px 10px;text-align:left;font-weight:600;color:var(--tx2);background:var(--sur2);border-bottom:1px solid var(--bd)}
+.dtbl td{padding:6px 10px;border-bottom:1px solid var(--bd);color:var(--tx)}
+.dtbl tr:last-child td{border-bottom:none}
+.ppill2{font-size:11px;font-weight:600;padding:2px 7px;border-radius:8px;display:inline-block}
+.pp-ldf{background:var(--ldf-bg);color:var(--ldf)}
+.pp-udf{background:var(--udf-bg);color:var(--udf)}
+.pp-nda{background:var(--nda-bg);color:var(--nda)}
+.pp-oth{background:var(--oth-bg);color:var(--oth)}
+.pp-none{background:var(--sur2);color:var(--tx3)}
+
+/* RESULTS TAB */
+.reswrap{padding:.75rem}
+.res-notice{background:#fffbeb;border:1px solid #fde68a;border-radius:var(--r);padding:10px 12px;font-size:13px;color:#92400e;margin-bottom:.75rem}
+.res-player-card{background:var(--sur);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;margin-bottom:.75rem}
+.res-player-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;background:var(--sur2);flex-wrap:wrap;gap:6px}
+.sr-badge{font-size:13px;font-weight:700;padding:4px 12px;border-radius:20px;background:var(--grn-bg);color:var(--grn);border:1px solid var(--grn-bd)}
+.sr-badge.na{background:var(--sur2);color:var(--tx3);border-color:var(--bd)}
+.res-detail{display:none;overflow-x:auto}
+.res-detail.open{display:block}
+.correct-row td{background:#f0fdf4}
+.wrong-row td{background:#fff5f5}
+
+/* LEADERBOARD TAB */
+.lbwrap{padding:.75rem}
+.lb-notice{background:#f0f4ff;border:1px solid var(--udf-bd);border-radius:var(--r);padding:10px 12px;font-size:13px;color:var(--udf);margin-bottom:.75rem}
+.lb-table-wrap{background:var(--sur);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden}
+.lb-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.lb-tbl th{padding:10px 14px;text-align:left;font-weight:600;color:var(--tx2);background:var(--sur2);border-bottom:1px solid var(--bd)}
+.lb-tbl td{padding:10px 14px;border-bottom:1px solid var(--bd);color:var(--tx)}
+.lb-tbl tr:last-child td{border-bottom:none}
+.rank-1{font-size:18px}.rank-2{font-size:15px}.rank-3{font-size:13px}
+.sr-cell{font-weight:700;color:var(--grn)}
+.sr-cell.na{color:var(--tx3);font-weight:400}
+
+/* ADMIN TAB */
+.admwrap{padding:.75rem}
+.adm-card{background:var(--sur);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;margin-bottom:.75rem}
+.adm-hdr{padding:10px 14px;background:#fff0f0;border-bottom:1px solid var(--ldf-bd);font-size:14px;font-weight:600;color:var(--ldf)}
+.adm-row{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--bd);flex-wrap:wrap}
+.adm-row:last-child{border-bottom:none}
+.adm-name{font-size:13px;font-weight:600;flex:1}
+.adm-stats{font-size:12px;color:var(--tx2)}
+.del-btn{font-size:12px;padding:5px 12px;background:#fff0f0;border:1px solid var(--ldf-bd);color:var(--ldf);border-radius:var(--r);cursor:pointer;font-family:var(--font);min-height:32px}
+.del-btn:active{background:var(--ldf);color:#fff}
+
+/* Admin results entry */
+.adm-results-card{background:var(--sur);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden}
+.adm-results-note{padding:10px 14px;background:#f0f4ff;border-bottom:1px solid var(--udf-bd);font-size:13px;color:var(--udf)}
+
+.loading{text-align:center;padding:2rem;color:var(--tx2);font-size:13px}
+.copy{position:fixed;bottom:8px;right:10px;font-size:10px;color:var(--tx3);pointer-events:none;z-index:50}
+.arrow{color:var(--tx3);font-size:16px;flex-shrink:0}
+</style>
+</head>
+<body>
+<div id="root"><p class="loading">Loading...</p></div>
+<div class="copy">© Kerala Election Predictor 2026</div>
+<script>
+// ── All 140 constituencies with current MLA ───────────────────
+var DISTRICTS = [
+  {name:'Kasaragod',seats:[
+    {id:1,name:'Manjeswaram',mla:'P B Abdul Razak',party:'UDF'},
+    {id:2,name:'Kasaragod',mla:'Nalapad N A',party:'UDF'},
+    {id:3,name:'Uduma',mla:'M Rajagopalan',party:'LDF'},
+    {id:4,name:'Kanhangad',mla:'E Chandrasekharan',party:'LDF'},
+    {id:5,name:'Trikaripur',mla:'K Kunhiraman',party:'LDF'}
+  ]},
+  {name:'Kannur',seats:[
+    {id:6,name:'Payyannur',mla:'Suni Babu',party:'LDF'},
+    {id:7,name:'Kalliasseri',mla:'E P Jayarajan',party:'LDF'},
+    {id:8,name:'Thalassery',mla:'A N Shamseer',party:'LDF'},
+    {id:9,name:'Irikkur',mla:'P V Anvar',party:'LDF'},
+    {id:10,name:'Azhikode',mla:'Ahamed Devarkovil',party:'UDF'},
+    {id:11,name:'Kannur',mla:'T P Nandakumar',party:'UDF'},
+    {id:12,name:'Dharmadom',mla:'Pinarayi Vijayan',party:'LDF'},
+    {id:13,name:'Mattannur',mla:'K K Rema (Ind)',party:'Others'},
+    {id:14,name:'Peravoor',mla:'C P Musafir',party:'LDF'}
+  ]},
+  {name:'Wayanad',seats:[
+    {id:15,name:'Mananthavady',mla:'O R Kelu',party:'LDF'},
+    {id:16,name:'Sulthan Bathery',mla:'I C Balakrishnan',party:'LDF'},
+    {id:17,name:'Kalpetta',mla:'T Siddique',party:'UDF'}
+  ]},
+  {name:'Kozhikode',seats:[
+    {id:18,name:'Thiruvambady',mla:'V K Sajeevan',party:'LDF'},
+    {id:19,name:'Kunnamangalam',mla:'P T A Rahim',party:'UDF'},
+    {id:20,name:'Kozhikode North',mla:'Ahamed Kabeer',party:'UDF'},
+    {id:21,name:'Kozhikode South',mla:'Thottathil Raveendran',party:'LDF'},
+    {id:22,name:'Beypore',mla:'V K C Mammed Koya',party:'UDF'},
+    {id:23,name:'Elathur',mla:'K P Kunhamed Master',party:'UDF'},
+    {id:24,name:'Koduvally',mla:'M K Muneer',party:'UDF'},
+    {id:25,name:'Balussery',mla:'K Dasan',party:'LDF'},
+    {id:26,name:'Kuttiady',mla:'N D Appachan',party:'UDF'},
+    {id:27,name:'Perambra',mla:'V Sivankutty',party:'LDF'}
+  ]},
+  {name:'Malappuram',seats:[
+    {id:28,name:'Tirur',mla:'V Abdul Hameed',party:'UDF'},
+    {id:29,name:'Tanur',mla:'S Shameem',party:'UDF'},
+    {id:30,name:'Tirurangadi',mla:'M Noushad',party:'UDF'},
+    {id:31,name:'Mankada',mla:'Ali Akbar',party:'UDF'},
+    {id:32,name:'Malappuram',mla:'P Ubaidullah',party:'UDF'},
+    {id:33,name:'Vengara',mla:'P K Basheer',party:'UDF'},
+    {id:34,name:'Vallikkunnu',mla:'K N A Khader',party:'UDF'},
+    {id:35,name:'Wandoor',mla:'Abdul Hameed Master',party:'LDF'},
+    {id:36,name:'Perinthalmanna',mla:'Syad Munawwarali Shihab Thangal',party:'UDF'},
+    {id:37,name:'Mannarkkad',mla:'N Samsudheen',party:'UDF'},
+    {id:38,name:'Malampuzha',mla:'M B Rajesh',party:'LDF'},
+    {id:39,name:'Ponnani',mla:'P Sreeramakrishnan',party:'LDF'}
+  ]},
+  {name:'Palakkad',seats:[
+    {id:40,name:'Trithala',mla:'K Babu',party:'UDF'},
+    {id:41,name:'Chittur',mla:'K V Vijeendran (BJP)',party:'NDA'},
+    {id:42,name:'Nenmara',mla:'V Chitharanjan',party:'LDF'},
+    {id:43,name:'Alathur',mla:'Anvar Sadath',party:'LDF'},
+    {id:44,name:'Chelakkara',mla:'K Radhakrishnan',party:'LDF'},
+    {id:45,name:'Palakkad',mla:'Shafi Parambil',party:'UDF'},
+    {id:46,name:'Tarur',mla:'V T Balram',party:'UDF'},
+    {id:47,name:'Shornur',mla:'P K Sasi',party:'LDF'}
+  ]},
+  {name:'Thrissur',seats:[
+    {id:48,name:'Guruvayur',mla:'Saji Cherian',party:'LDF'},
+    {id:49,name:'Manalur',mla:'Anim Mathew',party:'UDF'},
+    {id:50,name:'Ollur',mla:'Thiruvanchoor Radhakrishnan',party:'UDF'},
+    {id:51,name:'Thrissur',mla:'Padmaja Venugopal',party:'UDF'},
+    {id:52,name:'Nattika',mla:'S Sarma',party:'LDF'},
+    {id:53,name:'Irinjalakuda',mla:'A Pradeep Kumar',party:'LDF'},
+    {id:54,name:'Puthukkad',mla:'Benoy Viswam',party:'LDF'},
+    {id:55,name:'Chalakudy',mla:'Benny Behanan',party:'UDF'},
+    {id:56,name:'Kodungallur',mla:'K Radhakrishnan',party:'LDF'},
+    {id:57,name:'Mukundapuram',mla:'Mons Joseph',party:'UDF'}
+  ]},
+  {name:'Ernakulam',seats:[
+    {id:58,name:'Perumbavoor',mla:'P Rajeev',party:'LDF'},
+    {id:59,name:'Angamaly',mla:'P C George',party:'Others'},
+    {id:60,name:'Aluva',mla:'Anwar Sadath',party:'UDF'},
+    {id:61,name:'Kalamassery',mla:'V D Satheeshan',party:'UDF'},
+    {id:62,name:'Paravur',mla:'Sunny Joseph',party:'UDF'},
+    {id:63,name:'Vypin',mla:'T J Vinod',party:'UDF'},
+    {id:64,name:'Kochi',mla:'T D Rajukrishnan',party:'LDF'},
+    {id:65,name:'Thrippunithura',mla:'M Swaraj',party:'LDF'},
+    {id:66,name:'Ernakulam',mla:'Hibi Eden',party:'UDF'},
+    {id:67,name:'Thrikkakara',mla:'P T Thomas',party:'UDF'},
+    {id:68,name:'Kunnathunad',mla:'Thomas Unniyadan',party:'UDF'},
+    {id:69,name:'Piravom',mla:'Anoop Jacob',party:'Others'}
+  ]},
+  {name:'Idukki',seats:[
+    {id:70,name:'Muvattupuzha',mla:'M M Mani',party:'LDF'},
+    {id:71,name:'Kothamangalam',mla:'Antony John',party:'UDF'},
+    {id:72,name:'Udumbanchola',mla:'Palode Ravi',party:'LDF'},
+    {id:73,name:'Thodupuzha',mla:'Francis George',party:'Others'},
+    {id:74,name:'Idukki',mla:'Roshy Augustine',party:'UDF'},
+    {id:75,name:'Devikulam',mla:'S Rajendran',party:'LDF'},
+    {id:76,name:'Peerumade',mla:'Udayakumar',party:'LDF'}
+  ]},
+  {name:'Kottayam',seats:[
+    {id:77,name:'Pala',mla:'Jose Tom Pulikunnel',party:'UDF'},
+    {id:78,name:'Kaduthuruthy',mla:'George Thalacherry',party:'UDF'},
+    {id:79,name:'Vaikom',mla:'C A Unnikrishnan',party:'LDF'},
+    {id:80,name:'Ettumanoor',mla:'Roji John',party:'Others'},
+    {id:81,name:'Kottayam',mla:'Thiruvanchoor Radhakrishnan',party:'UDF'},
+    {id:82,name:'Puthuppally',mla:'Thomas Chandy',party:'Others'},
+    {id:83,name:'Changanacherry',mla:'Jose Thettayil',party:'UDF'},
+    {id:84,name:'Chirakkadav',mla:'Anoop Jacob',party:'Others'}
+  ]},
+  {name:'Alappuzha',seats:[
+    {id:85,name:'Aroor',mla:'A M Ariff',party:'LDF'},
+    {id:86,name:'Cherthala',mla:'Eldhose Kunnappilly',party:'UDF'},
+    {id:87,name:'Alappuzha',mla:'Thomas Isaac',party:'LDF'},
+    {id:88,name:'Ambalappuzha',mla:'H Salam',party:'LDF'},
+    {id:89,name:'Haripad',mla:'K S Sabarinathan',party:'LDF'},
+    {id:90,name:'Kayamkulam',mla:'Sasi Nair C B',party:'LDF'},
+    {id:91,name:'Mavelikkara',mla:'M Noushad',party:'LDF'},
+    {id:92,name:'Chengannur',mla:'Saji Cherian',party:'LDF'}
+  ]},
+  {name:'Pathanamthitta',seats:[
+    {id:93,name:'Thiruvalla',mla:'Anto Anton',party:'UDF'},
+    {id:94,name:'Ranni',mla:'Pramod Narayanan',party:'LDF'},
+    {id:95,name:'Aranmula',mla:'Veena George',party:'LDF'},
+    {id:96,name:'Konni',mla:'Adv K U Jenish Kumar',party:'LDF'},
+    {id:97,name:'Adoor',mla:'A Alexander',party:'UDF'},
+    {id:98,name:'Pandalam',mla:'M Martin',party:'Others'}
+  ]},
+  {name:'Kollam',seats:[
+    {id:99,name:'Karunagappally',mla:'Bindu Krishna',party:'LDF'},
+    {id:100,name:'Chavara',mla:'G Sudhakaran',party:'LDF'},
+    {id:101,name:'Kundara',mla:'N K Premachandran',party:'UDF'},
+    {id:102,name:'Kollam',mla:'M Mukesh',party:'LDF'},
+    {id:103,name:'Eravipuram',mla:'Satheeshan Pacheni',party:'LDF'},
+    {id:104,name:'Chathannur',mla:'C Divakaran',party:'LDF'},
+    {id:105,name:'Punalur',mla:'K U Jenish Kumar',party:'LDF'},
+    {id:106,name:'Kottarakkara',mla:'K Sivankutty',party:'LDF'},
+    {id:107,name:'Pathanapuram',mla:'K B Ganesh Kumar',party:'Others'}
+  ]},
+  {name:'Thiruvananthapuram',seats:[
+    {id:108,name:'Kattakkada',mla:'I B Satheesh',party:'LDF'},
+    {id:109,name:'Varkala',mla:'V Joy',party:'LDF'},
+    {id:110,name:'Attingal',mla:'Bindhu Krishna',party:'LDF'},
+    {id:111,name:'Chirayinkeezhu',mla:'K Sivankumar',party:'LDF'},
+    {id:112,name:'Nedumangad',mla:'V K Prasanth',party:'LDF'},
+    {id:113,name:'Vamanapuram',mla:'D K Murali',party:'LDF'},
+    {id:114,name:'Thiruvananthapuram',mla:'V K Prasanth',party:'LDF'},
+    {id:115,name:'Nemom',mla:'O Rajagopal',party:'NDA'},
+    {id:116,name:'Aruvikkara',mla:'V Shivankumar',party:'LDF'},
+    {id:117,name:'Parassala',mla:'C K Hareendran',party:'LDF'},
+    {id:118,name:'Kovalam',mla:'M Vincent',party:'UDF'},
+    {id:119,name:'Neyyattinkara',mla:'K Ansalan',party:'LDF'},
+    {id:120,name:'Kazhakkoottam',mla:'Kadakampally Surendran',party:'LDF'},
+    {id:121,name:'Vattiyoorkavu',mla:'V K Madhu',party:'LDF'},
+    {id:122,name:'Poojapura',mla:'K Sivankutty (Ind)',party:'Others'},
+    {id:123,name:'Thiruvananthapuram Central',mla:'K Muraleedharan',party:'UDF'}
+  ]},
+  {name:'Kasaragod North',seats:[
+    {id:124,name:'Vellarikkundu',mla:'K Kunhiraman',party:'LDF'},
+    {id:125,name:'Hosdurg',mla:'K Surendran',party:'NDA'}
+  ]},
+  {name:'Kannur South',seats:[
+    {id:126,name:'Kuthuparamba',mla:'E T Muhammed Basheer',party:'UDF'},
+    {id:127,name:'Sreekandapuram',mla:'T V Rajesh',party:'LDF'},
+    {id:128,name:'Taliparamba',mla:'M V Jayarajan',party:'LDF'}
+  ]},
+  {name:'Kozhikode South',seats:[
+    {id:129,name:'Quilandy',mla:'K P Kunhammed Master',party:'UDF'},
+    {id:130,name:'Vadakara',mla:'Shafi Parambil',party:'UDF'}
+  ]},
+  {name:'Palakkad East',seats:[
+    {id:131,name:'Ottapalam',mla:'Shafi Parambil',party:'UDF'},
+    {id:132,name:'Pattambi',mla:'Santhosh Kumar',party:'UDF'}
+  ]},
+  {name:'Thrissur North',seats:[
+    {id:133,name:'Wadakkanchery',mla:'N K Premachandran',party:'UDF'},
+    {id:134,name:'Kunnamkulam',mla:'K P Anil Kumar',party:'LDF'}
+  ]},
+  {name:'Ernakulam North',seats:[
+    {id:135,name:'North Paravur',mla:'Joice George',party:'Others'}
+  ]},
+  {name:'Idukki South',seats:[
+    {id:136,name:'Kanjirappally',mla:'P C George',party:'Others'}
+  ]},
+  {name:'Kottayam North',seats:[
+    {id:137,name:'Meenachil',mla:'Jose K Mani',party:'LDF'}
+  ]},
+  {name:'Alappuzha North',seats:[
+    {id:138,name:'Kuttanad',mla:'Thomas Chandy',party:'Others'},
+    {id:139,name:'Mararikulam',mla:'Mathew T Thomas',party:'UDF'}
+  ]},
+  {name:'Kollam East',seats:[
+    {id:140,name:'Chadayamangalam',mla:'K K Rajesh',party:'LDF'}
+  ]}
+];
+
+var CONST_MAP = {};
+DISTRICTS.forEach(function(d){d.seats.forEach(function(s){CONST_MAP[s.id]=s;});});
+var PARTIES = ['LDF','UDF','NDA','Others'];
+var PC = {LDF:'ldf',UDF:'udf',NDA:'nda',Others:'oth'};
+
+var S = {
+  loggedIn:false, username:'', isAdmin:false,
+  tab:'predict',
+  predictions:{},
+  authMode:'login',
+  savingId:null
+};
+
+function api(method, url, body, cb) {
+  var opts = {method:method, headers:{'Content-Type':'application/json'}};
+  if (body) opts.body = JSON.stringify(body);
+  fetch(url, opts).then(function(r){return r.json();}).then(cb).catch(function(){cb({success:false,error:'Network error'});});
+}
+
+function init() {
+  api('GET','/api/me',null,function(r){
+    if (r.loggedIn) {
+      S.loggedIn=true; S.username=r.username; S.isAdmin=r.isAdmin;
+      if (!r.isAdmin) {
+        api('GET','/api/predictions/mine',null,function(pr){
+          if (pr.success) S.predictions=pr.predictions;
+          render();
+        });
+      } else { render(); }
+    } else { render(); }
+  });
+}
+
+function doAuth() {
+  var un = (document.getElementById('au')||{}).value;
+  var pw = (document.getElementById('ap')||{}).value;
+  un = un?un.trim():''; pw = pw||'';
+  var url = S.authMode==='login'?'/api/login':'/api/register';
+  var errEl = document.getElementById('aerr');
+  if (errEl) errEl.style.display='none';
+  api('POST',url,{username:un,password:pw},function(r){
+    if (r.success) {
+      S.loggedIn=true; S.username=r.username; S.isAdmin=r.isAdmin;
+      if (!r.isAdmin) {
+        api('GET','/api/predictions/mine',null,function(pr){
+          if (pr.success) S.predictions=pr.predictions;
+          render();
+        });
+      } else { render(); }
+    } else {
+      var e=document.getElementById('aerr');
+      if(e){e.textContent=r.error;e.style.display='block';}
+    }
+  });
+}
+
+function doLogout() {
+  api('POST','/api/logout',{},function(){
+    S.loggedIn=false; S.username=''; S.isAdmin=false;
+    S.predictions={}; S.tab='predict'; render();
+  });
+}
+
+function selectParty(cid, party) {
+  var cur = S.predictions[cid];
+  if (cur===party) {
+    delete S.predictions[cid];
+    api('POST','/api/predictions/clear',{constituencyId:cid},function(){});
+  } else {
+    S.predictions[cid]=party;
+    api('POST','/api/predictions/save',{constituencyId:cid,party:party},function(r){
+      var si=document.getElementById('si-'+cid);
+      if(si)si.textContent='';
+    });
+    var si=document.getElementById('si-'+cid);
+    if(si)si.textContent='💾';
+  }
+  updateProgressUI();
+  updateRowUI(cid);
+}
+
+function updateProgressUI() {
+  var count=Object.keys(S.predictions).length;
+  var pct=Math.round(count/140*100);
+  var f=document.getElementById('pbar-f');
+  var c=document.getElementById('pcnt');
+  if(f)f.style.width=pct+'%';
+  if(c)c.textContent=count+' / 140';
+  var t={LDF:0,UDF:0,NDA:0,Others:0};
+  Object.values(S.predictions).forEach(function(p){t[p]=(t[p]||0)+1;});
+  ['LDF','UDF','NDA','Others'].forEach(function(p){
+    var el=document.getElementById('tly-'+p);
+    if(el)el.textContent=t[p]||0;
+  });
+}
+
+function updateRowUI(cid) {
+  var party=S.predictions[cid];
+  PARTIES.forEach(function(p){
+    var btn=document.getElementById('btn-'+cid+'-'+p);
+    if(btn){if(party===p)btn.classList.add('sel');else btn.classList.remove('sel');}
+  });
+}
+
+function switchTab(tab) {
+  S.tab=tab;
+  var tc=document.getElementById('tc');
+  if(tc){
+    tc.innerHTML=tabContent();
+    if(tab==='allpred')loadAllPred();
+    if(tab==='results')loadResults();
+    if(tab==='leaderboard')loadLeaderboard();
+    if(tab==='admin')loadAdmin();
+  }
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.classList.toggle('active',t.getAttribute('data-tab')===tab);
+  });
+}
+
+function render() {
+  document.getElementById('root').innerHTML = S.loggedIn ? appHTML() : authHTML();
+  if (!S.loggedIn) { var i=document.getElementById('au'); if(i)i.focus(); }
+  if (S.loggedIn && S.tab==='allpred') loadAllPred();
+  if (S.loggedIn && S.tab==='results') loadResults();
+  if (S.loggedIn && S.tab==='leaderboard') loadLeaderboard();
+  if (S.loggedIn && S.tab==='admin') loadAdmin();
+}
+
+function authHTML() {
+  return '<div class="awrap"><div class="acard">'+
+    '<div class="alogo"><h1>🗳️ Kerala Predictor</h1><p>2026 Assembly Election Predictions</p></div>'+
+    '<div class="atabs">'+
+      '<button class="atab'+(S.authMode==='login'?' on':'')+'" onclick="S.authMode=\'login\';render()">Login</button>'+
+      '<button class="atab'+(S.authMode==='register'?' on':'')+'" onclick="S.authMode=\'register\';render()">Register</button>'+
+    '</div>'+
+    '<div class="fld"><label>Username</label><input id="au" type="text" placeholder="Enter username" autocomplete="username" onkeydown="if(event.key===\'Enter\')doAuth()"/></div>'+
+    '<div class="fld"><label>Password</label><input id="ap" type="password" placeholder="Enter password" autocomplete="'+(S.authMode==='register'?'new-password':'current-password')+'" onkeydown="if(event.key===\'Enter\')doAuth()"/></div>'+
+    '<button class="abtn" onclick="doAuth()">'+(S.authMode==='login'?'Login':'Create Account')+'</button>'+
+    '<div class="aerr" id="aerr"></div>'+
+  '</div></div>';
+}
+
+function appHTML() {
+  var tabs = S.isAdmin
+    ? [['admin','Admin Panel']]
+    : [['predict','My Predictions'],['allpred','All Predictions'],['results','Results'],['leaderboard','Leaderboard']];
+  var tabsHTML = tabs.map(function(t){
+    return '<div class="tab'+(S.tab===t[0]?' active':'')+'" data-tab="'+t[0]+'" onclick="switchTab(\''+t[0]+'\')">'+t[1]+'</div>';
+  }).join('');
+  return '<div class="topbar">'+
+    '<div><div class="topbar-title">🗳️ Kerala Predictor</div><div class="topbar-sub">2026 Assembly Election</div></div>'+
+    '<div style="display:flex;align-items:center;gap:6px"><span class="ubadge">'+S.username+'</span><button class="lbtn" onclick="doLogout()">Logout</button></div>'+
+  '</div>'+
+  '<div class="tabs">'+tabsHTML+'</div>'+
+  '<div id="tc">'+tabContent()+'</div>';
+}
+
+function tabContent() {
+  if (S.tab==='predict') return predictHTML();
+  if (S.tab==='allpred') return '<div class="apwrap"><div id="ap-list" class="loading">Loading...</div></div>';
+  if (S.tab==='results') return '<div class="reswrap"><div class="res-notice">⚠️ Actual results will be entered by the admin after the election. Strike rates will be calculated once results are available.</div><div id="res-list" class="loading">Loading...</div></div>';
+  if (S.tab==='leaderboard') return '<div class="lbwrap"><div class="lb-notice">🏆 Players are ranked by strike rate (correct predictions ÷ 140 × 100%). Strike rates appear once actual results are entered.</div><div id="lb-content" class="loading">Loading...</div></div>';
+  if (S.tab==='admin') return '<div class="admwrap"><div id="adm-content" class="loading">Loading...</div></div>';
+  return '';
+}
+
+// ── PREDICT TAB ───────────────────────────────────────────────
+function predictHTML() {
+  var count=Object.keys(S.predictions).length;
+  var pct=Math.round(count/140*100);
+  var t={LDF:0,UDF:0,NDA:0,Others:0};
+  Object.values(S.predictions).forEach(function(p){t[p]=(t[p]||0)+1;});
+
+  var blocks='';
+  DISTRICTS.forEach(function(d){
+    var rows='';
+    d.seats.forEach(function(s){
+      var sel=S.predictions[s.id];
+      var btns=PARTIES.map(function(p){
+        return '<button id="btn-'+s.id+'-'+p+'" class="pbtn pbtn-'+PC[p]+(sel===p?' sel':'')+'" onclick="selectParty('+s.id+',\''+p+'\')">'+p+'</button>';
+      }).join('');
+      var mlaCls='mla-'+PC[s.party];
+      rows+='<div class="const-row">'+
+        '<span class="cnum">'+s.id+'</span>'+
+        '<div class="cinfo">'+
+          '<div class="cname">'+s.name+'</div>'+
+          '<div class="cmla">'+s.mla+'<span class="cmla-party '+mlaCls+'">'+s.party+'</span></div>'+
+        '</div>'+
+        '<div class="pbtns">'+btns+'</div>'+
+        '<span class="sind" id="si-'+s.id+'"></span>'+
+      '</div>';
+    });
+    blocks+='<div class="dist-hdr">'+d.name+'</div>'+rows;
+  });
+
+  return '<div class="pwrap">'+
+    '<div class="prog-card">'+
+      '<div class="prog-top"><span class="prog-lbl">Your predictions</span><span class="prog-cnt" id="pcnt">'+count+' / 140</span></div>'+
+      '<div class="pbar"><div class="pbar-f" id="pbar-f" style="width:'+pct+'%"></div></div>'+
+      '<div class="tally">'+
+        '<div class="tally-item tally-ldf"><div class="tally-lbl">LDF</div><div class="tally-num" id="tly-LDF">'+(t.LDF||0)+'</div></div>'+
+        '<div class="tally-item tally-udf"><div class="tally-lbl">UDF</div><div class="tally-num" id="tly-UDF">'+(t.UDF||0)+'</div></div>'+
+        '<div class="tally-item tally-nda"><div class="tally-lbl">NDA</div><div class="tally-num" id="tly-NDA">'+(t.NDA||0)+'</div></div>'+
+        '<div class="tally-item tally-oth"><div class="tally-lbl">Others</div><div class="tally-num" id="tly-Others">'+(t.Others||0)+'</div></div>'+
+      '</div>'+
+    '</div>'+blocks+'</div>';
+}
+
+// ── ALL PREDICTIONS TAB ───────────────────────────────────────
+function loadAllPred() {
+  api('GET','/api/summary/users',null,function(r){
+    var el=document.getElementById('ap-list');
+    if(!el||!r.success)return;
+    if(!r.users.length){el.innerHTML='<p style="color:var(--tx2);text-align:center;padding:1.5rem">No players yet.</p>';el.classList.remove('loading');return;}
+    var html='';
+    r.users.forEach(function(u,idx){
+      html+='<div class="player-card">'+
+        '<div class="player-hdr" onclick="togglePlayer(\'pd-'+idx+'\',\'pa-'+idx+'\')">'+
+          '<div>'+
+            '<div class="player-name">👤 '+u.username+' <span style="font-size:11px;color:var(--tx3);font-weight:400">('+u.filled+'/140)</span></div>'+
+            '<div class="player-pills" style="margin-top:5px">'+
+              '<span class="ppill ppill-ldf">LDF '+(u.totals.LDF||0)+'</span>'+
+              '<span class="ppill ppill-udf">UDF '+(u.totals.UDF||0)+'</span>'+
+              '<span class="ppill ppill-nda">NDA '+(u.totals.NDA||0)+'</span>'+
+              '<span class="ppill ppill-oth">Others '+(u.totals.Others||0)+'</span>'+
+            '</div>'+
+          '</div>'+
+          '<span class="arrow" id="pa-'+idx+'">▸</span>'+
+        '</div>'+
+        '<div class="player-detail" id="pd-'+idx+'" data-user="'+u.username+'"><div class="loading" style="padding:1rem">Loading...</div></div>'+
+      '</div>';
+    });
+    el.innerHTML=html; el.classList.remove('loading');
+  });
+}
+
+function togglePlayer(detId, arrId) {
+  var el=document.getElementById(detId);
+  var arr=document.getElementById(arrId);
+  if(!el)return;
+  if(el.classList.contains('open')){el.classList.remove('open');if(arr)arr.textContent='▸';return;}
+  el.classList.add('open');
+  if(arr)arr.textContent='▾';
+  if(el.querySelector('.loading')){
+    var username=el.getAttribute('data-user');
+    api('GET','/api/summary/user/'+encodeURIComponent(username),null,function(r){
+      if(!r.success)return;
+      el.innerHTML=buildPredTable(r.predictions, null);
+    });
+  }
+}
+
+function buildPredTable(preds, actual) {
+  var rows='';
+  DISTRICTS.forEach(function(d){
+    d.seats.forEach(function(s){
+      var party=preds[s.id];
+      var act=actual?actual[s.id]:null;
+      var correct=act&&party&&act===party;
+      var wrong=act&&party&&act!==party;
+      var rowCls=act?(correct?'correct-row':'wrong-row'):'';
+      rows+='<tr class="'+rowCls+'">'+
+        '<td>'+s.id+'</td>'+
+        '<td>'+s.name+'</td>'+
+        '<td style="color:var(--tx2)">'+d.name+'</td>'+
+        '<td><span class="ppill2 '+(party?'pp-'+PC[party]:'pp-none')+'">'+(party||'—')+'</span></td>'+
+        (act?'<td><span class="ppill2 pp-'+PC[act]+'">'+act+'</span></td>':'')  +
+        (act&&party?'<td>'+(correct?'✅':'❌')+'</td>':'')  +
+      '</tr>';
+    });
+  });
+  var extraCols=actual?'<th>Actual</th><th>✓</th>':'';
+  return '<div style="overflow-x:auto"><table class="dtbl">'+
+    '<thead><tr><th>#</th><th>Constituency</th><th>District</th><th>Prediction</th>'+extraCols+'</tr></thead>'+
+    '<tbody>'+rows+'</tbody></table></div>';
+}
+
+// ── RESULTS TAB ───────────────────────────────────────────────
+function loadResults() {
+  api('GET','/api/summary/users',null,function(r){
+    api('GET','/api/results/actual',null,function(ar){
+      var el=document.getElementById('res-list');
+      if(!el||!r.success)return;
+      var actual=ar.success?ar.results:{};
+      var hasActual=Object.keys(actual).length>0;
+      if(!r.users.length){el.innerHTML='<p style="color:var(--tx2);text-align:center;padding:1.5rem">No players yet.</p>';el.classList.remove('loading');return;}
+      var html='';
+      r.users.forEach(function(u,idx){
+        var srText=hasActual&&u.strikeRate!==null?u.strikeRate+'%':'Pending';
+        var srCls=hasActual&&u.strikeRate!==null?'sr-badge':'sr-badge na';
+        html+='<div class="res-player-card">'+
+          '<div class="res-player-hdr" onclick="toggleResPlayer(\'rpd-'+idx+'\',\'rpa-'+idx+'\')">'+
+            '<div>'+
+              '<div class="player-name">👤 '+u.username+' <span style="font-size:11px;color:var(--tx3);font-weight:400">('+u.filled+'/140)</span></div>'+
+              '<div class="player-pills" style="margin-top:5px">'+
+                '<span class="ppill ppill-ldf">LDF '+(u.totals.LDF||0)+'</span>'+
+                '<span class="ppill ppill-udf">UDF '+(u.totals.UDF||0)+'</span>'+
+                '<span class="ppill ppill-nda">NDA '+(u.totals.NDA||0)+'</span>'+
+                '<span class="ppill ppill-oth">Others '+(u.totals.Others||0)+'</span>'+
+              '</div>'+
+            '</div>'+
+            '<div style="display:flex;align-items:center;gap:8px">'+
+              '<span class="'+srCls+'">'+srText+'</span>'+
+              '<span class="arrow" id="rpa-'+idx+'">▸</span>'+
+            '</div>'+
+          '</div>'+
+          '<div class="res-detail" id="rpd-'+idx+'" data-user="'+u.username+'"><div class="loading" style="padding:1rem">Loading...</div></div>'+
+        '</div>';
+      });
+      el.innerHTML=html; el.classList.remove('loading');
+    });
+  });
+}
+
+function toggleResPlayer(detId, arrId) {
+  var el=document.getElementById(detId);
+  var arr=document.getElementById(arrId);
+  if(!el)return;
+  if(el.classList.contains('open')){el.classList.remove('open');if(arr)arr.textContent='▸';return;}
+  el.classList.add('open');
+  if(arr)arr.textContent='▾';
+  if(el.querySelector('.loading')){
+    var username=el.getAttribute('data-user');
+    api('GET','/api/summary/user/'+encodeURIComponent(username),null,function(r){
+      api('GET','/api/results/actual',null,function(ar){
+        if(!r.success)return;
+        var actual=ar.success?ar.results:{};
+        el.innerHTML=buildPredTable(r.predictions, Object.keys(actual).length?actual:null);
+      });
+    });
+  }
+}
+
+// ── LEADERBOARD TAB ───────────────────────────────────────────
+function loadLeaderboard() {
+  api('GET','/api/summary/users',null,function(r){
+    api('GET','/api/results/actual',null,function(ar){
+      var el=document.getElementById('lb-content');
+      if(!el||!r.success)return;
+      var actual=ar.success?ar.results:{};
+      var hasActual=Object.keys(actual).length>0;
+      if(!r.users.length){el.innerHTML='<p style="color:var(--tx2);text-align:center;padding:1.5rem">No players yet.</p>';el.classList.remove('loading');return;}
+      var sorted=r.users.slice().sort(function(a,b){
+        if(!hasActual)return b.filled-a.filled;
+        var sa=a.strikeRate!==null?a.strikeRate:-1;
+        var sb=b.strikeRate!==null?b.strikeRate:-1;
+        return sb-sa;
+      });
+      var medals=['🥇','🥈','🥉'];
+      var rows=sorted.map(function(u,i){
+        var srText=hasActual&&u.strikeRate!==null?u.strikeRate+'%':'—';
+        var srCls=hasActual&&u.strikeRate!==null?'sr-cell':'sr-cell na';
+        return '<tr>'+
+          '<td style="font-size:'+(i<3?18-i*2:12)+'px">'+(medals[i]||(i+1))+'</td>'+
+          '<td style="font-weight:600">'+u.username+'</td>'+
+          '<td>'+u.filled+' / 140</td>'+
+          '<td><span class="ppill ppill-ldf">'+u.totals.LDF+'</span> <span class="ppill ppill-udf">'+u.totals.UDF+'</span> <span class="ppill ppill-nda">'+u.totals.NDA+'</span></td>'+
+          '<td class="'+srCls+'">'+(hasActual&&u.strikeRate!==null?u.strikeRate+'%':'Pending')+'</td>'+
+          (hasActual&&u.strikeRate!==null?'<td style="color:var(--tx2);font-size:12px">'+u.correct+'/140 correct</td>':'<td></td>')+
+        '</tr>';
+      }).join('');
+      el.innerHTML='<div class="lb-table-wrap"><table class="lb-tbl">'+
+        '<thead><tr><th>Rank</th><th>Player</th><th>Filled</th><th>Party split</th><th>Strike rate</th><th>Correct</th></tr></thead>'+
+        '<tbody>'+rows+'</tbody></table></div>';
+      el.classList.remove('loading');
+    });
+  });
+}
+
+// ── ADMIN TAB ─────────────────────────────────────────────────
+function loadAdmin() {
+  var el=document.getElementById('adm-content');
+  if(!el)return;
+  api('GET','/api/admin/users',null,function(r){
+    if(!r.success){el.innerHTML='<p style="color:red;padding:1rem">Error loading users.</p>';return;}
+    var usersHTML='<div class="adm-card"><div class="adm-hdr">👥 Registered Players ('+r.users.length+')</div>';
+    if(!r.users.length){usersHTML+='<p style="padding:1rem;color:var(--tx2);font-size:13px">No players registered yet.</p>';}
+    r.users.forEach(function(u){
+      usersHTML+='<div class="adm-row">'+
+        '<div class="adm-name">👤 '+u.username+'</div>'+
+        '<div class="adm-stats">'+u.filled+'/140 filled · LDF '+u.totals.LDF+' UDF '+u.totals.UDF+' NDA '+u.totals.NDA+'</div>'+
+        '<button class="del-btn" onclick="deleteUser('+u.id+',\''+u.username+'\')">Delete</button>'+
+      '</div>';
+    });
+    usersHTML+='</div>';
+
+    // Actual results entry
+    api('GET','/api/results/actual',null,function(ar){
+      var actual=ar.success?ar.results:{};
+      var filled=Object.keys(actual).length;
+      var resBlocks='';
+      DISTRICTS.forEach(function(d){
+        var rows='';
+        d.seats.forEach(function(s){
+          var cur=actual[s.id];
+          var btns=PARTIES.map(function(p){
+            return '<button class="pbtn pbtn-'+PC[p]+(cur===p?' sel':'')+'" onclick="setActual('+s.id+',\''+p+'\')">'+p+'</button>';
+          }).join('');
+          rows+='<div class="const-row">'+
+            '<span class="cnum">'+s.id+'</span>'+
+            '<div class="cinfo"><div class="cname">'+s.name+'</div></div>'+
+            '<div class="pbtns">'+btns+'</div>'+
+            '<span class="sind" id="ar-si-'+s.id+'"></span>'+
+          '</div>';
+        });
+        resBlocks+='<div class="dist-hdr">'+d.name+'</div>'+rows;
+      });
+
+      el.innerHTML=usersHTML+
+        '<div class="adm-results-card" style="margin-top:.75rem">'+
+          '<div class="adm-results-note">📊 Enter actual election results here. '+filled+'/140 results entered. Players\' strike rates will update automatically.</div>'+
+          resBlocks+
+        '</div>';
+      el.classList.remove('loading');
+    });
+  });
+}
+
+function deleteUser(userId, username) {
+  if(!confirm('Delete all data for "'+username+'"? This cannot be undone.'))return;
+  api('POST','/api/admin/delete-user',{userId:userId},function(r){
+    if(r.success)loadAdmin();
+    else alert(r.error||'Error');
+  });
+}
+
+function setActual(cid, party) {
+  var si=document.getElementById('ar-si-'+cid);
+  if(si)si.textContent='💾';
+  api('POST','/api/results/save',{constituencyId:cid,party:party},function(r){
+    if(si)si.textContent=r.success?'✓':'✗';
+    setTimeout(function(){if(si)si.textContent='';},1500);
+    // Update button styles
+    PARTIES.forEach(function(p){
+      var btns=document.querySelectorAll('#adm-content .const-row');
+      // Refresh admin view to reflect change
+    });
+    loadAdmin();
+  });
+}
+
+init();
+</script>
+</body>
+</html>
