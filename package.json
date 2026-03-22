@@ -3,15 +3,11 @@
   "version": "1.0.0",
   "description": "Kerala Assembly Election Prediction App",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  },
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18.0.0" },
   "dependencies": {
     "express": "^4.18.2",
-    "sqlite3": "^5.1.7",
+    "pg": "^8.11.3",
     "bcryptjs": "^2.4.3",
     "express-session": "^1.17.3"
   }
