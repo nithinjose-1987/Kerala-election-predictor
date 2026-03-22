@@ -936,20 +936,29 @@ function loadLeaderboard(){
       return sb!==sa?sb-sa:b.filled-a.filled;
     });
     var medals=['🥇','🥈','🥉'];
-    el.innerHTML='<div class="lb-wrap"><table class="lb-tbl">'+
-      '<thead><tr><th>Rank</th><th>Player</th><th>Filled</th><th>Party split</th><th>Strike rate</th><th>Correct</th></tr></thead>'+
-      '<tbody>'+sorted.map(function(u,i){
+    el.innerHTML='<div style="display:flex;flex-direction:column;gap:8px">'+sorted.map(function(u,i){
         var cls=u.strikeRate!==null?(u.strikeRate>=60?'sr-hi':u.strikeRate>=40?'sr-mi':'sr-lo'):'sr-na';
         var srTxt=u.strikeRate!==null?u.strikeRate+'%':'Pending';
-        return '<tr>'+
-          '<td style="font-size:'+(i<3?20-i*3:13)+'px;text-align:center">'+(medals[i]||(i+1))+'</td>'+
-          '<td style="font-weight:600">'+u.username+'</td>'+
-          '<td style="color:var(--tx2)">'+u.filled+'/140</td>'+
-          '<td><span class="ppill pp-ldf">'+u.totals.LDF+'</span> <span class="ppill pp-udf">'+u.totals.UDF+'</span> <span class="ppill pp-nda">'+u.totals.NDA+'</span></td>'+
-          '<td><span class="sr-badge '+cls+'">'+srTxt+'</span></td>'+
-          (u.strikeRate!==null?'<td style="color:var(--tx2);font-size:12px">'+u.correct+'/140</td>':'<td></td>')+
-        '</tr>';
-      }).join('')+'</tbody></table></div>';
+        var rankBg=i===0?'background:#fffbeb':i===1?'background:#f8fafc':i===2?'background:#fff7ed':'';
+        return '<div style="background:var(--sur);border:1px solid var(--bd);border-radius:var(--rl);padding:12px 14px;'+rankBg+'">'+
+          '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'+
+            '<span style="font-size:'+(i<3?22-i*3:14)+'px;width:28px;text-align:center;flex-shrink:0">'+(medals[i]||(i+1))+'</span>'+
+            '<div style="flex:1;min-width:0">'+
+              '<div style="font-size:14px;font-weight:600;color:var(--tx)">'+u.username+'</div>'+
+              '<div style="font-size:11px;color:var(--tx3);margin-top:2px">'+teamBadge(u.team)+'</div>'+
+            '</div>'+
+            '<span class="sr-badge '+cls+'">'+srTxt+'</span>'+
+          '</div>'+
+          '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">'+
+            '<span class="ppill pp-ldf">LDF '+u.totals.LDF+'</span>'+
+            '<span class="ppill pp-udf">UDF '+u.totals.UDF+'</span>'+
+            '<span class="ppill pp-nda">NDA '+u.totals.NDA+'</span>'+
+            '<span class="ppill pp-oth">Oth '+u.totals.Others+'</span>'+
+            '<span style="margin-left:auto;font-size:12px;color:var(--tx2)">'+u.filled+'/140 filled</span>'+
+            (u.strikeRate!==null?'<span style="font-size:12px;color:var(--grn);font-weight:600">✅ '+u.correct+' correct</span>':'')+
+          '</div>'+
+        '</div>';
+      }).join('')+'</div>';
   });
 }
 
@@ -985,6 +994,21 @@ function loadAdminUsers(){
               '<button onclick="uploadCSV()" style="background:var(--udf);color:#fff;border:none;padding:6px 14px;border-radius:var(--r);cursor:pointer;font-family:var(--font);min-height:34px;font-weight:600">Upload CSV</button>'+
             '</div>'+
             '<div id="upload-result" style="margin-top:8px;font-size:13px"></div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="adm-section" style="margin-top:.75rem">'+
+          '<div class="adm-hdr"><span>🔑 Password Reset</span></div>'+
+          '<div style="padding:12px 14px;border-bottom:1px solid var(--bd)">'+
+            '<p style="font-size:12px;color:var(--tx2);margin-bottom:8px">Reset player password if they forget it.</p>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+              '<select id="reset-username" style="font-size:13px;padding:6px 8px;border:1px solid var(--bd2);border-radius:var(--r);font-family:var(--font);flex:1;min-width:140px">'+
+                '<option value="">Select player...</option>'+
+                r.users.map(function(u){return '<option value="'+u.username+'">'+u.username+'</option>';}).join('')+
+              '</select>'+
+              '<input id="reset-newpw" type="text" placeholder="New password" style="font-size:13px;padding:6px 8px;border:1px solid var(--bd2);border-radius:var(--r);font-family:var(--font);flex:1;min-width:140px"/>'+
+              '<button onclick="doResetPassword()" style="background:var(--udf);color:#fff;border:none;padding:6px 14px;border-radius:var(--r);cursor:pointer;font-family:var(--font);min-height:34px;font-weight:600">Reset</button>'+
+            '</div>'+
+            '<div id="reset-result" style="margin-top:8px;font-size:13px"></div>'+
           '</div>'+
         '</div>'+
         '<div class="adm-section" style="margin-top:.75rem">'+
@@ -1150,10 +1174,19 @@ function loadActualResults(){
       '<div class="adm-section">'+
         '<div class="adm-hdr">'+
           '<span>📊 Actual 2026 Results — '+filled+'/140 (2021 pre-loaded)</span>'+
-          '<div style="display:flex;gap:6px">'+
+          '<div style="display:flex;gap:6px;flex-wrap:wrap">'+
             '<a class="csv-btn" href="/api/admin/csv/actual">⬇ CSV</a>'+
+            '<a class="csv-btn" href="#" onclick="downloadActualTemplate();return false">⬇ Template</a>'+
             '<button class="clear-all-btn" onclick="clearAllResults()">Clear All</button>'+
           '</div>'+
+        '</div>'+
+        '<div style="padding:12px 14px;border-bottom:1px solid var(--bd)">'+
+          '<p style="font-size:12px;color:var(--tx2);margin-bottom:8px">Bulk upload results CSV: <code style="background:var(--sur2);padding:1px 6px;border-radius:4px">constituency_id, constituency_name, party</code></p>'+
+          '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">'+
+            '<input type="file" id="actual-csv-file" accept=".csv" style="font-size:13px;flex:1;min-width:180px"/>'+
+            '<button onclick="uploadActualCSV()" style="background:var(--udf);color:#fff;border:none;padding:6px 14px;border-radius:var(--r);cursor:pointer;font-family:var(--font);min-height:34px;font-weight:600">Upload Results</button>'+
+          '</div>'+
+          '<div id="actual-upload-result" style="margin-top:8px;font-size:13px"></div>'+
         '</div>'+
         '<div style="padding:10px 14px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--bd)">'+
           '<span class="ppill pp-ldf">LDF '+counts.LDF+'</span>'+
@@ -1185,6 +1218,74 @@ function setActual(cid,party){
 function clearAllResults(){
   if(!confirm('Clear ALL 140 results? Strike rates will reset.'))return;
   api('POST','/api/results/clear-all',{},function(r){if(r.success)loadActualResults();else alert('Error');});
+}
+
+function downloadActualTemplate(){
+  fetch('/api/admin/csv/actual').then(function(r){return r.text();}).then(function(existing){
+    // Build template with all 140 pre-filled constituency names, party blank
+    var lines=['constituency_id,constituency_name,party'];
+    DISTRICTS.forEach(function(d){d.seats.forEach(function(s){lines.push(s.id+','+s.name+',');});});
+    var blob=new Blob([lines.join('\n')],{type:'text/csv'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='actual_results_template.csv';
+    a.click();
+  });
+}
+
+function uploadActualCSV(){
+  var fileInput=document.getElementById('actual-csv-file');
+  var resultEl=document.getElementById('actual-upload-result');
+  if(!fileInput||!fileInput.files.length){
+    if(resultEl)resultEl.innerHTML='<span style="color:var(--ldf)">Please select a CSV file first.</span>';
+    return;
+  }
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var text=e.target.result;
+    var lines=text.split('\n').map(function(l){return l.trim();}).filter(function(l){return l;});
+    var start=lines[0].toLowerCase().includes('constituency')?1:0;
+    var rows=[];
+    for(var i=start;i<lines.length;i++){
+      var parts=lines[i].split(',');
+      if(parts.length<3)continue;
+      var cid=parseInt(parts[0].trim());
+      var party=parts[2].trim();
+      if(!party)continue; // skip blank party rows
+      rows.push({constituencyId:cid,party:party});
+    }
+    if(!rows.length){if(resultEl)resultEl.innerHTML='<span style="color:var(--ldf)">No valid rows found. Make sure party column is filled.</span>';return;}
+    if(resultEl)resultEl.innerHTML='<span style="color:var(--tx2)">Uploading '+rows.length+' results...</span>';
+    api('POST','/api/admin/bulk-actual',{rows:rows},function(r){
+      if(!r.success){if(resultEl)resultEl.innerHTML='<span style="color:var(--ldf)">Error: '+r.error+'</span>';return;}
+      var res=r.results;
+      var msg='<span style="color:var(--grn)">✅ '+res.success+' results uploaded.</span>';
+      if(res.skipped)msg+=' <span style="color:#854f0b">⚠️ '+res.skipped+' skipped.</span>';
+      if(res.errors&&res.errors.length){
+        msg+='<details style="margin-top:4px"><summary style="font-size:12px;cursor:pointer">'+res.errors.length+' error(s)</summary>'+
+          '<div style="font-size:11px;color:var(--ldf);margin-top:4px">'+res.errors.slice(0,10).join('<br>')+'</div></details>';
+      }
+      if(resultEl)resultEl.innerHTML=msg;
+      loadActualResults();
+    });
+  };
+  reader.readAsText(fileInput.files[0]);
+}
+
+function doResetPassword(){
+  var username=document.getElementById('reset-username').value;
+  var newpw=(document.getElementById('reset-newpw').value||'').trim();
+  var resultEl=document.getElementById('reset-result');
+  if(!username){if(resultEl)resultEl.innerHTML='<span style="color:var(--ldf)">Please select a player.</span>';return;}
+  if(!newpw||newpw.length<4){if(resultEl)resultEl.innerHTML='<span style="color:var(--ldf)">Password must be at least 4 characters.</span>';return;}
+  api('POST','/api/admin/reset-password',{username:username,newPassword:newpw},function(r){
+    if(r.success){
+      if(resultEl)resultEl.innerHTML='<span style="color:var(--grn)">✅ Password reset for '+username+'.</span>';
+      document.getElementById('reset-newpw').value='';
+    } else {
+      if(resultEl)resultEl.innerHTML='<span style="color:var(--ldf)">Error: '+r.error+'</span>';
+    }
+  });
 }
 
 init();

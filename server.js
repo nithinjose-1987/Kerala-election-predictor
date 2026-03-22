@@ -464,6 +464,44 @@ app.get('/api/admin/csv/actual', requireAdmin, async function(req, res) {
   } catch(e) { res.json({ success: false, error: 'Server error.' }); }
 });
 
+// ── Bulk actual results upload ───────────────────────────────
+app.post('/api/admin/bulk-actual', requireAdmin, async function(req, res) {
+  try {
+    var rows = req.body.rows;
+    if (!rows || !Array.isArray(rows)) return res.json({ success: false, error: 'Invalid data.' });
+    var valid = ['LDF','UDF','NDA','Others'];
+    var success = 0, skipped = 0, errors = [];
+    for (var row of rows) {
+      var cid = parseInt(row.constituencyId);
+      var party = (row.party || '').trim();
+      if (!cid || cid < 1 || cid > 140) { errors.push('Invalid constituency: ' + row.constituencyId); skipped++; continue; }
+      if (!valid.includes(party)) { errors.push('Constituency ' + cid + ': invalid party "' + party + '"'); skipped++; continue; }
+      await dbQuery(
+        `INSERT INTO actual_results (constituency_id, party, updated_at) VALUES ($1, $2, NOW())
+         ON CONFLICT (constituency_id) DO UPDATE SET party=EXCLUDED.party, updated_at=NOW()`,
+        [cid, party]
+      );
+      success++;
+    }
+    res.json({ success: true, results: { success, skipped, errors } });
+  } catch(e) { console.error(e); res.json({ success: false, error: 'Server error: ' + e.message }); }
+});
+
+// ── Admin password reset for players ─────────────────────────
+app.post('/api/admin/reset-password', requireAdmin, async function(req, res) {
+  try {
+    var username = (req.body.username || '').trim();
+    var newPassword = (req.body.newPassword || '').trim();
+    if (!username) return res.json({ success: false, error: 'Username required.' });
+    if (!newPassword || newPassword.length < 4) return res.json({ success: false, error: 'Password must be at least 4 characters.' });
+    var user = await dbQuery('SELECT id FROM users WHERE username = $1', [username]);
+    if (!user.rows.length) return res.json({ success: false, error: 'User not found.' });
+    var hash = bcrypt.hashSync(newPassword, 10);
+    await dbQuery('UPDATE users SET password = $1 WHERE username = $2', [hash, username]);
+    res.json({ success: true });
+  } catch(e) { res.json({ success: false, error: 'Server error.' }); }
+});
+
 // ── News proxy ────────────────────────────────────────────────
 app.get('/api/news', async function(req, res) {
   try {
