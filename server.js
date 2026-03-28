@@ -51,8 +51,10 @@ async function initDB() {
   await dbQuery(`CREATE TABLE IF NOT EXISTS actual_results (
     constituency_id INTEGER PRIMARY KEY,
     party TEXT NOT NULL,
+    winner_name TEXT DEFAULT '',
     updated_at TIMESTAMP DEFAULT NOW()
   )`, []);
+  await dbQuery(`ALTER TABLE actual_results ADD COLUMN IF NOT EXISTS winner_name TEXT DEFAULT ''`, []).catch(function(){});
 
   await dbQuery(`CREATE TABLE IF NOT EXISTS settings (
     key TEXT PRIMARY KEY,
@@ -61,9 +63,10 @@ async function initDB() {
 
   await dbQuery(`INSERT INTO settings (key, value) VALUES ('predictions_locked', 'false') ON CONFLICT DO NOTHING`, []);
 
-  // Seed 2021 results if empty
+  // Seed 2021 results only on first-ever run, not after admin clears
+  const seeded = await dbQuery("SELECT value FROM settings WHERE key = 'results_seeded'", []);
   const existing = await dbQuery('SELECT COUNT(*) as c FROM actual_results', []);
-  if (parseInt(existing.rows[0].c) === 0) {
+  if (parseInt(existing.rows[0].c) === 0 && (!seeded.rows.length || seeded.rows[0].value !== 'true')) {
     const results2021 = {
       1:'UDF',2:'UDF',3:'LDF',4:'LDF',5:'LDF',6:'LDF',7:'LDF',8:'LDF',9:'UDF',10:'LDF',
       11:'LDF',12:'LDF',13:'LDF',14:'LDF',15:'LDF',16:'UDF',17:'LDF',18:'UDF',19:'UDF',
@@ -88,6 +91,7 @@ async function initDB() {
         [parseInt(cid), party]
       );
     }
+    await dbQuery("INSERT INTO settings (key, value) VALUES ('results_seeded', 'true') ON CONFLICT (key) DO UPDATE SET value='true'", []);
     console.log('Seeded 2021 election results');
   }
 }
@@ -221,12 +225,13 @@ app.post('/api/results/save', requireAdmin, async function(req, res) {
   try {
     var cid = parseInt(req.body.constituencyId);
     var party = req.body.party;
+    var winnerName = (req.body.winnerName || '').trim();
     if (!cid || cid < 1 || cid > 140) return res.json({ success: false, error: 'Invalid.' });
     if (!['LDF','UDF','NDA','Others'].includes(party)) return res.json({ success: false, error: 'Invalid party.' });
     await dbQuery(
-      `INSERT INTO actual_results (constituency_id, party, updated_at) VALUES ($1, $2, NOW())
-       ON CONFLICT (constituency_id) DO UPDATE SET party = EXCLUDED.party, updated_at = NOW()`,
-      [cid, party]
+      `INSERT INTO actual_results (constituency_id, party, winner_name, updated_at) VALUES ($1, $2, $3, NOW())
+       ON CONFLICT (constituency_id) DO UPDATE SET party = EXCLUDED.party, winner_name = EXCLUDED.winner_name, updated_at = NOW()`,
+      [cid, party, winnerName]
     );
     res.json({ success: true });
   } catch(e) { res.json({ success: false, error: 'Server error.' }); }
@@ -401,7 +406,7 @@ app.post('/api/admin/bulk-upload', requireAdmin, async function(req, res) {
 });
 
 // ── CSV exports ───────────────────────────────────────────────
-const CONST_NAMES = {"1":"Manjeshwaram","2":"Kasaragod","3":"Udma","4":"Kanhangad","5":"Thrikkaripur","6":"Payyannur","7":"Kalliasseri","8":"Thaliparamba","9":"Irikkur","10":"Azhikode","11":"Kannur","12":"Dharmadom","13":"Thalassery","14":"Kuthuparamba","15":"Mattannur","16":"Peravoor","17":"Mananthavady","18":"Sulthan Bathery","19":"Kalpetta","20":"Vatakara","21":"Kuttiady","22":"Nadapuram","23":"Koyilandy","24":"Perambra","25":"Balusseri","26":"Elathur","27":"Kozhikode North","28":"Kozhikode South","29":"Beypore","30":"Kunnamangalam","31":"Koduvally","32":"Thiruvambadi","33":"Kondotty","34":"Eranad","35":"Nilambur","36":"Wandoor","37":"Manjeri","38":"Perinthalmanna","39":"Mankada","40":"Malappuram","41":"Vengara","42":"Vallikunnu","43":"Tirurangadi","44":"Tanur","45":"Tirur","46":"Kottakkal","47":"Thavanur","48":"Ponnani","49":"Thrithala","50":"Pattambi","51":"Shornur","52":"Ottappalam","53":"Kongad","54":"Mannarkkad","55":"Malampuzha","56":"Palakkad","57":"Tarur","58":"Chittur","59":"Nenmara","60":"Alathur","61":"Chelakkara","62":"Kunnamkulam","63":"Guruvayoor","64":"Manalur","65":"Wadakkanchery","66":"Ollur","67":"Thrissur","68":"Nattika","69":"Kaipamangalam","70":"Irinjalakuda","71":"Puthukkad","72":"Chalakudy","73":"Kodungallur","74":"Perumbavoor","75":"Angamaly","76":"Aluva","77":"Kalamassery","78":"Paravur","79":"Vypin","80":"Kochi","81":"Thripunithura","82":"Ernakulam","83":"Thrikkakara","84":"Kunnathunad","85":"Piravom","86":"Muvattupuzha","87":"Kothamangalam","88":"Devikulam","89":"Udumbanchola","90":"Thodupuzha","91":"Idukki","92":"Peerumede","93":"Pala","94":"Kaduthuruthy","95":"Kanjirappally","96":"Poonjar","97":"Ettumanoor","98":"Kottayam","99":"Puthuppally","100":"Vaikom","101":"Changanassery","102":"Chirakkadav","103":"Aroor","104":"Cherthala","105":"Ambalapuzha","106":"Alappuzha","107":"Kuttanad","108":"Haripad","109":"Kayamkulam","110":"Mavelikara","111":"Chengannur","112":"Thiruvalla","113":"Ranni","114":"Aranmula","115":"Konni","116":"Adoor","117":"Pandalam","118":"Karunagappally","119":"Chavara","120":"Kundara","121":"Kottarakkara","122":"Kunnathur","123":"Pathanapuram","124":"Punalur","125":"Chadayamangalam","126":"Eravipuram","127":"Kollam","128":"Chathannur","129":"Attingal","130":"Varkala","131":"Chirayinkeezhu","132":"Nedumangad","133":"Vamanapuram","134":"Kattakkada","135":"Kazhakkoottam","136":"Thiruvananthapuram","137":"Nemom","138":"Aruvikkara","139":"Kovalam","140":"Neyyattinkara"};
+const CONST_NAMES = {"1":"Manjeshwaram","2":"Kasaragod","3":"Udma","4":"Kanhangad","5":"Thrikkaripur","6":"Payyannur","7":"Kalliasseri","8":"Thaliparamba","9":"Irikkur","10":"Azhikode","11":"Kannur","12":"Dharmadom","13":"Thalassery","14":"Kuthuparamba","15":"Mattannur","16":"Peravoor","17":"Mananthavady","18":"Sulthan Bathery","19":"Kalpetta","20":"Vatakara","21":"Kuttiady","22":"Nadapuram","23":"Koyilandy","24":"Perambra","25":"Balusseri","26":"Elathur","27":"Kozhikode North","28":"Kozhikode South","29":"Beypore","30":"Kunnamangalam","31":"Koduvally","32":"Thiruvambadi","33":"Kondotty","34":"Eranad","35":"Nilambur","36":"Wandoor","37":"Manjeri","38":"Perinthalmanna","39":"Mankada","40":"Malappuram","41":"Vengara","42":"Vallikunnu","43":"Tirurangadi","44":"Tanur","45":"Tirur","46":"Kottakkal","47":"Thavanur","48":"Ponnani","49":"Thrithala","50":"Pattambi","51":"Shornur","52":"Ottappalam","53":"Kongad","54":"Mannarkkad","55":"Malampuzha","56":"Palakkad","57":"Tarur","58":"Chittur","59":"Nenmara","60":"Alathur","61":"Chelakkara","62":"Kunnamkulam","63":"Guruvayoor","64":"Manalur","65":"Wadakkanchery","66":"Ollur","67":"Thrissur","68":"Nattika","69":"Kaipamangalam","70":"Irinjalakuda","71":"Puthukkad","72":"Chalakudy","73":"Kodungallur","74":"Perumbavoor","75":"Angamaly","76":"Aluva","77":"Kalamassery","78":"Paravur","79":"Vypin","80":"Kochi","81":"Thripunithura","82":"Ernakulam","83":"Thrikkakara","84":"Kunnathunad","85":"Piravom","86":"Muvattupuzha","87":"Kothamangalam","88":"Devikulam","89":"Udumbanchola","90":"Thodupuzha","91":"Idukki","92":"Peerumede","93":"Pala","94":"Kaduthuruthy","95":"Kanjirappally","96":"Poonjar","97":"Ettumanoor","98":"Kottayam","99":"Puthuppally","100":"Vaikom","101":"Changanassery","102":"Vattiyoorkavu","103":"Aroor","104":"Cherthala","105":"Ambalapuzha","106":"Alappuzha","107":"Kuttanad","108":"Haripad","109":"Kayamkulam","110":"Mavelikara","111":"Chengannur","112":"Thiruvalla","113":"Ranni","114":"Aranmula","115":"Konni","116":"Adoor","117":"Parassala","118":"Karunagappally","119":"Chavara","120":"Kundara","121":"Kottarakkara","122":"Kunnathur","123":"Pathanapuram","124":"Punalur","125":"Chadayamangalam","126":"Eravipuram","127":"Kollam","128":"Chathannur","129":"Attingal","130":"Varkala","131":"Chirayinkeezhu","132":"Nedumangad","133":"Vamanapuram","134":"Kattakkada","135":"Kazhakkoottam","136":"Thiruvananthapuram","137":"Nemom","138":"Aruvikkara","139":"Kovalam","140":"Neyyattinkara"};
 
 app.get('/api/admin/csv/predictions', requireAdmin, async function(req, res) {
   try {

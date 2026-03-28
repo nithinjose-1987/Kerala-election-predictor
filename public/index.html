@@ -318,7 +318,7 @@ var DISTRICTS=[
     {id:93,name:'Pala',mla:'Mani C. Kappan',party:'Others'},
     {id:94,name:'Kaduthuruthy',mla:'Mons Joseph',party:'UDF'},
     {id:95,name:'Kanjirappally',mla:'Dr. N. Jayaraj',party:'LDF'},
-    {id:96,name:'Poonjar',mla:'Adv. Roy C. Thomas',party:'UDF'},
+    {id:96,name:'Poonjar',mla:'Sebastian Kulathunkal',party:'UDF'},
     {id:97,name:'Ettumanoor',mla:'V.N. Vasavan',party:'LDF'},
     {id:98,name:'Kottayam',mla:'Thiruvanchoor Radhakrishnan',party:'UDF'},
     {id:99,name:'Puthuppally',mla:'Thomas Chandy',party:'UDF'},
@@ -366,7 +366,7 @@ var DISTRICTS=[
     {id:102,name:'Vattiyoorkavu',mla:'V.K. Prasanth',party:'LDF'},
     {id:135,name:'Kazhakkoottam',mla:'Kadakampally Surendran',party:'LDF'},
     {id:136,name:'Thiruvananthapuram',mla:'Antony Raju',party:'LDF'},
-    {id:137,name:'Nemom',mla:'V. Shivankutty',party:'NDA'},
+    {id:137,name:'Nemom',mla:'V. Shivankutty',party:'LDF'},
     {id:138,name:'Aruvikkara',mla:'C.K. Hareendran',party:'LDF'},
     {id:117,name:'Parassala',mla:'C.K. Hareendran',party:'LDF'},
     {id:139,name:'Kovalam',mla:'M. Vincent',party:'UDF'},
@@ -379,6 +379,160 @@ DISTRICTS.forEach(function(d){d.seats.forEach(function(s){s.distName=d.name;CONS
 var PARTIES=['LDF','UDF','NDA','Others'];
 var PC={LDF:'ldf',UDF:'udf',NDA:'nda',Others:'oth'};
 var PARTY_COLORS={LDF:'#cc0000',UDF:'#0057e7',NDA:'#ff6600',Others:'#6b21a8'};
+
+// Sub-parties within each alliance (2021 results)
+var SUBPARTY_MAP={1: "IUML", 2: "IUML", 3: "CPI(M)", 4: "CPI", 5: "CPI(M)", 6: "CPI(M)", 7: "CPI(M)", 8: "CPI(M)", 9: "INC", 10: "CPI(M)", 11: "Con(S)", 12: "CPI(M)", 13: "CPI(M)", 14: "LJD", 15: "CPI(M)", 16: "INC", 17: "CPI(M)", 18: "INC", 19: "INC", 20: "RMPI", 21: "CPI(M)", 22: "CPI", 23: "CPI(M)", 24: "CPI(M)", 25: "CPI(M)", 26: "NCP", 27: "CPI(M)", 28: "INL", 29: "CPI(M)", 30: "Ind.", 31: "IUML", 32: "CPI(M)", 33: "IUML", 34: "IUML", 35: "Ind.", 36: "INC", 37: "IUML", 38: "IUML", 39: "IUML", 40: "IUML", 41: "IUML", 42: "IUML", 43: "IUML", 44: "NSC", 45: "IUML", 46: "IUML", 47: "Ind.", 48: "CPI(M)", 49: "CPI(M)", 50: "CPI", 51: "CPI(M)", 52: "CPI(M)", 53: "CPI(M)", 54: "IUML", 55: "CPI(M)", 56: "INC", 57: "CPI(M)", 58: "JD(S)", 59: "CPI(M)", 60: "CPI(M)", 61: "CPI(M)", 62: "CPI(M)", 63: "CPI(M)", 64: "CPI(M)", 65: "CPI(M)", 66: "CPI", 67: "CPI", 68: "CPI", 69: "CPI", 70: "CPI(M)", 71: "CPI(M)", 72: "INC", 73: "CPI", 74: "INC", 75: "INC", 76: "INC", 77: "CPI(M)", 78: "INC", 79: "CPI(M)", 80: "CPI(M)", 81: "INC", 82: "INC", 83: "INC", 84: "CPI(M)", 85: "KC(J)", 86: "INC", 87: "CPI(M)", 88: "CPI(M)", 89: "CPI(M)", 90: "KC", 91: "KC(M)", 92: "CPI", 93: "Ind.", 94: "KC(M)", 95: "KC(M)", 96: "KC", 97: "CPI(M)", 98: "INC", 99: "KC", 100: "CPI(M)", 101: "KC(M)", 102: "CPI(M)", 103: "CPI(M)", 104: "CPI", 105: "CPI(M)", 106: "CPI(M)", 107: "NCP", 108: "INC", 109: "CPI(M)", 110: "CPI(M)", 111: "CPI(M)", 112: "INC", 113: "CPI(M)", 114: "CPI(M)", 115: "CPI(M)", 116: "CPI", 117: "CPI(M)", 118: "INC", 119: "CPI(M)", 120: "INC", 121: "CPI(M)", 122: "Ind.", 123: "KC(B)", 124: "CPI(M)", 125: "CPI", 126: "CPI(M)", 127: "CPI(M)", 128: "CPI", 129: "CPI(M)", 130: "CPI(M)", 131: "CPI", 132: "CPI", 133: "CPI(M)", 134: "CPI(M)", 135: "CPI(M)", 136: "CPI(M)", 137: "CPI(M)", 138: "CPI(M)", 139: "INC", 140: "CPI(M)"};
+
+var CANDIDATES_2026 = {
+  1:{LDF:'K.R. Jayanandan (CPI(M))',UDF:'A.K.M. Ashraf (IUML)',NDA:'K. Surendran (BJP)'},
+  2:{LDF:'Shanavas Padhoor (Ind-LDF)',UDF:'Kallatra Mahin Haji (IUML)',NDA:'M.L. Ashwini (BJP)'},
+  3:{LDF:'C.H. Kunhambu (CPI(M))',UDF:'K. Neelakandan (INC)',NDA:'Manulal Meloth (BJP)'},
+  4:{LDF:'Govindan Pallikkappil (CPI)',UDF:'Shyji Ottapalli (KC(J))',NDA:'M. Balraj (BJP)'},
+  5:{LDF:'V.P.P. Mustafa (CPI(M))',UDF:'Sandeep Varier (INC)',NDA:'Ravi Kulangara (TTP)'},
+  6:{LDF:'T.I. Madhusoodanan (CPI(M))',UDF:'V. Kunjikrishnan (Ind-UDF)',NDA:'A.P. Gangadharan (BJP)'},
+  7:{LDF:'M. Vijin (CPI(M))',UDF:'Rajeevan Kappachery (INC)',NDA:'A.V. Anilkumar (BJP)'},
+  8:{LDF:'P.K. Shyamala (CPI(M))',UDF:'T.K. Govindan (Ind-UDF)',NDA:'N. Haridas (BJP)'},
+  9:{LDF:'Mathew Kunnapally (KC(M))',UDF:'Sajeev Joseph (INC)',NDA:'Srinath Padmanabhan (TTP)'},
+  10:{LDF:'K.V. Sumesh (CPI(M))',UDF:'Kareem Cheleri (IUML)',NDA:'K.K. Vinod Kumar (BJP)'},
+  11:{LDF:'Kadanappalli Ramachandran (Cong-S)',UDF:'T.O. Mohanan (INC)',NDA:'C. Raghunath (BJP)'},
+  12:{LDF:'Pinarayi Vijayan (CPI(M))',UDF:'Abdul Rasheed (INC)',NDA:'K. Ranjith (BJP)'},
+  13:{LDF:'Karayi Rajan (CPI(M))',UDF:'K.P. Saju (INC)',NDA:'O. Nidheesh (BJP)'},
+  14:{LDF:'P.K. Praveen (RJD)',UDF:'Jayanthi Rajan (IUML)',NDA:'Shijilal (BJP)'},
+  15:{LDF:'V.K. Sanoj (CPI(M))',UDF:'Chandran Thillenkeri (INC)',NDA:'Biju Elakkuzhi (BJP)'},
+  16:{LDF:'K.K. Shailaja (CPI(M))',UDF:'Sunny Joseph (INC)',NDA:'Paily Vathiatt (BDJS)'},
+  17:{LDF:'O.R. Kelu (CPI(M))',UDF:'Usha Vijayan (INC)',NDA:'P. Shyam Raj (BJP)'},
+  18:{LDF:'M.S. Viswanathan (CPI(M))',UDF:'I.C. Balakrishnan (INC)',NDA:'A.S. Kavitha (BJP)'},
+  19:{LDF:'P.K. Anil Kumar (RJD)',UDF:'T. Siddique (INC)',NDA:'Prashanth Malavayal (BJP)'},
+  20:{LDF:'M.K. Bhaskaran (RJD)',UDF:'K.K. Rema (RMPI)',NDA:'K. Dileep (BJP)'},
+  21:{LDF:'K.P. Kunhammadkutty (CPI(M))',UDF:'Parakkal Abdulla (IUML)',NDA:'Ramadas Manaleri (BJP)'},
+  22:{LDF:'P. Vasantham (CPI)',UDF:'K.M. Abhijith (INC)',NDA:'C.P. Vipin Chandran (BJP)'},
+  23:{LDF:'K. Dasan (CPI(M))',UDF:'K. Praveen Kumar (INC)',NDA:'C.R. Praphul Krishnan (BJP)'},
+  24:{LDF:'T.P. Ramakrishnan (CPI(M))',UDF:'Fathima Thahiliya (IUML)',NDA:'M. Mohanan Master (BJP)'},
+  25:{LDF:'K.M. Sachin Dev (CPI(M))',UDF:'V.T. Sooraj (INC)',NDA:'C.P. Sateeshan (BJP)'},
+  26:{LDF:'A.K. Saseendran (NCP-SP)',UDF:'Vidya Balakrishnan (INC)',NDA:'T. Devadas (BJP)'},
+  27:{LDF:'Thottathil Ravindran (CPI(M))',UDF:'K. Jayanth (INC)',NDA:'Navya Haridas (BJP)'},
+  28:{LDF:'Ahamed Devarkovil (INL)',UDF:'Faisal Babu (IUML)',NDA:'T. Reneesh (BJP)'},
+  29:{LDF:'P.A. Mohammed Riyas (CPI(M))',UDF:'P.V. Anvar (Ind-UDF)',NDA:'K.P. Prakash Babu (BJP)'},
+  30:{LDF:'P.T.A. Rahim (Ind-LDF)',UDF:'M.A. Razak Master (IUML)',NDA:'V.K. Sajeevan (BJP)'},
+  31:{LDF:'Saleem Madavoor (Ind-LDF)',UDF:'P.K. Firos (IUML)',NDA:'Giri Pambanal (BDJS)'},
+  32:{LDF:'Linto Joseph (CPI(M))',UDF:'C.K. Kasim (IUML)',NDA:'Sunny Thomas (TTP)'},
+  33:{LDF:'P. Jiji (Ind-LDF)',UDF:'T.P. Ashrafali (IUML)',NDA:'P. Subhramanyan (BJP)'},
+  34:{LDF:'Shafeer Kizhisery (CPI)',UDF:'P.K. Basheer (IUML)',NDA:'N. Sreeprakash (BJP)'},
+  35:{LDF:'U. Sharafali (Ind-LDF)',UDF:'Aryadan Shoukath (INC)',NDA:'Gireesh Mekkad (BDJS)'},
+  36:{LDF:'K.K. Damodaran (CPI(M))',UDF:'A.P. Anil Kumar (INC)',NDA:'E.P. Kumaradas (BJP)'},
+  37:{LDF:'M. Mustafa (Ind-LDF)',UDF:'M. Rahmathulla (IUML)',NDA:'Pathmasree M (BJP)'},
+  38:{LDF:'V.P. Muhammad Haneefa (CPI(M))',UDF:'Najeeb Kanthapuram (IUML)',NDA:'K.P. Baburaj (BJP)'},
+  39:{LDF:'M.P. Alavi (CPI(M))',UDF:'Manjalamkuzhi Ali (IUML)',NDA:'Lijoy Paul (BJP)'},
+  40:{LDF:'T. Mujeeb (NCP-SP)',UDF:'P.K. Kunhalikutty (IUML)',NDA:'Aswathy Gupthakumar (BJP)'},
+  41:{LDF:'Muhammad Sabah Kundukuzhikkal (Ind-LDF)',UDF:'K.M. Shaji (IUML)',NDA:'Jayakrishnan V.N. (BJP)'},
+  42:{LDF:'C.P. Musthafa (Ind-LDF)',UDF:'T.V. Ibrahim (IUML)',NDA:'M. Preman Master (BJP)'},
+  43:{LDF:'Ajit Koladi (CPI)',UDF:'P.M.A. Sameer (IUML)',NDA:'Riju C Raghav (BJP)'},
+  44:{LDF:'P. Mohammed Sameer (Ind-LDF)',UDF:'P.K. Navas (IUML)',NDA:'Deepa Puzhakkal (BJP)'},
+  45:{LDF:'V. Abdurahiman (Ind-LDF)',UDF:'Kurukkoli Moideen (IUML)',NDA:'K. Narayanan Master (BJP)'},
+  46:{LDF:'Preethi Konchath (Ind-LDF)',UDF:'K.K. Abid Hussain Thangal (IUML)',NDA:'Subrahmanian Chunkapally (BDJS)'},
+  47:{LDF:'K.T. Jaleel (Ind-LDF)',UDF:'V.S. Joy (INC)',NDA:'Ravi Thelath (BJP)'},
+  48:{LDF:'M.K. Sakeer (CPI(M))',UDF:'K.P. Noushad Ali (INC)',NDA:'E. Maneesh (BDJS)'},
+  49:{LDF:'M.B. Rajesh (CPI(M))',UDF:'V.T. Balram (INC)',NDA:'V. Unnikrishnan Master (BJP)'},
+  50:{LDF:'Muhammed Muhsin (CPI)',UDF:'T.P. Shaji (INC)',NDA:'P. Manoj (BJP)'},
+  51:{LDF:'P. Mammikutty (CPI(M))',UDF:'P. Harigovindan Master (INC)',NDA:'Sanku T. Das (BJP)'},
+  52:{LDF:'K. Premkumar (CPI(M))',UDF:'P.K. Sasi (INC)',NDA:'Major Ravi (BJP)'},
+  53:{LDF:'K. Shanthakumari (CPI(M))',UDF:'K.A. Thulasi (INC)',NDA:'Renu Suresh (BJP)'},
+  54:{LDF:'Mansil Abubacker (CPI)',UDF:'N. Samsudheen (IUML)',NDA:'Issac Varghese (BDJS)'},
+  55:{LDF:'E. Prabhakaran (CPI(M))',UDF:'A. Suresh (INC)',NDA:'C. Krishnakumar (BJP)'},
+  56:{LDF:'N.M.R. Rasakh (Ind-LDF)',UDF:'Ramesh Pisharody (INC)',NDA:'Sobha Surendran (BJP)'},
+  57:{LDF:'P.P. Sumod (CPI(M))',UDF:'K.C. Subramanian (INC)',NDA:'Suresh Babu (BJP)'},
+  58:{LDF:'V. Murugadas (ISJD)',UDF:'Sumesh Achuthan (INC)',NDA:'Pranesh Rajendran (BJP)'},
+  59:{LDF:'K. Preman (CPI(M))',UDF:'A. Thankappan (INC)',NDA:'A.N. Anurag (BDJS)'},
+  60:{LDF:'T.M. Sasi (CPI(M))',UDF:'K.N. Febin (INC)',NDA:'K.V. Prasanna Kumar (BJP)'},
+  61:{LDF:'U.R. Pradeep (CPI(M))',UDF:'Sivan Veettikkunnu (Ind-UDF)',NDA:'K. Balakrishnan (BJP)'},
+  62:{LDF:'A.C. Moideen (CPI(M))',UDF:'P.T. Ajay Mohan (INC)',NDA:'Rijil K.R. (BDJS)'},
+  63:{LDF:'N.K. Akbar (CPI(M))',UDF:'C.H. Rasheed (IUML)',NDA:'B. Gopalakrishnan (BJP)'},
+  64:{LDF:'C. Raveendranath (CPI(M))',UDF:'T.N. Prathapan (INC)',NDA:'K.K. Aneesh Kumar (BJP)'},
+  65:{LDF:'Xavier Chittilappilly (CPI(M))',UDF:'Vyshak Narayanaswami (INC)',NDA:'T.S. Ullas Babu (BJP)'},
+  66:{LDF:'K. Rajan (CPI)',UDF:'Shaji Kodankandath (INC)',NDA:'Bijoy Thomas (BJP)'},
+  67:{LDF:'Alankode Leelakrishnan (CPI)',UDF:'Rajan Pallan (INC)',NDA:'Padmaja Venugopal (BJP)'},
+  68:{LDF:'Geetha Gopi (CPI)',UDF:'Sunil Lalur (INC)',NDA:'C.C. Mukundan (BJP)'},
+  69:{LDF:'K.K. Valsaraj (CPI)',UDF:'T.M. Nazar (INC)',NDA:'Athulya Ghosh (BDJS)'},
+  70:{LDF:'R. Bindu (CPI(M))',UDF:'Thomas Unniyadan (KC)',NDA:'Santhosh Cherkalam (BJP)'},
+  71:{LDF:'K.K. Ramachandran (CPI(M))',UDF:'K.M. Babu Raj (INC)',NDA:'A. Nagesh (BJP)'},
+  72:{LDF:'Biju Chirayath (KC(M))',UDF:'T.J. Saneesh Kumar Joseph (INC)',NDA:'Charly Paul (TTP)'},
+  73:{LDF:'V.R. Sunil (CPI)',UDF:'O.J. Janeesh (INC)',NDA:'Varghese George (TTP)'},
+  74:{LDF:'Basil Paul (KC(M))',UDF:'Manoj Moothedan (INC)',NDA:'Jibi Pathickal (TTP)'},
+  75:{LDF:'Saju Paul (CPI(M))',UDF:'Roji M. John (INC)',NDA:'Promy Kuriakose (TTP)'},
+  76:{LDF:'A.M. Ariff (CPI(M))',UDF:'Anwar Sadath (INC)',NDA:'M.A. Brahmaraj (BJP)'},
+  77:{LDF:'P. Rajeeve (CPI(M))',UDF:'V.E. Abdul Gafoor (IUML)',NDA:'M.P. Binu (BDJS)'},
+  78:{LDF:'E.T. Taison (CPI)',UDF:'V.D. Satheesan (INC)',NDA:'Vathsala Prasanna Kumar (BJP)'},
+  79:{LDF:'M.B. Shaini (CPI(M))',UDF:'Tony Chammany (INC)',NDA:'Anitha Thomas (TTP)'},
+  80:{LDF:'K.J. Maxi (CPI(M))',UDF:'Mohammad Shiyas (INC)',NDA:'Xavier Joolappan (TTP)'},
+  81:{LDF:'K.N. Unnikrishnan (CPI(M))',UDF:'Deepak Joy (INC)',NDA:'Anjali Nair (TTP)'},
+  82:{LDF:'Sabu George (ISJD)',UDF:'T.J. Vinod (INC)',NDA:'P.R. Shivashankaran (BJP)'},
+  83:{LDF:'Pushpa Das (CPI(M))',UDF:'Uma Thomas (INC)',NDA:'Akhil Marar (TTP)'},
+  84:{LDF:'P.V. Srinijin (CPI(M))',UDF:'V.P. Sajeendran (INC)',NDA:'Babu Divakaran (TTP)'},
+  85:{LDF:'Sabu K. Jacob (KC(M))',UDF:'Anoop Jacob (KC(J))',NDA:'Jibi Abraham (TTP)'},
+  86:{LDF:'N. Arun (CPI)',UDF:'Mathew Kuzhalnadan (INC)',NDA:'Sunny Kadoothazhe (TTP)'},
+  87:{LDF:'Antony John (CPI(M))',UDF:'Shibu Thekkumpuram (KC)',NDA:'Aji Narayanan (BDJS)'},
+  88:{LDF:'A. Raja (CPI(M))',UDF:'F. Raja (INC)',NDA:'S. Rajendran (BJP)'},
+  89:{LDF:'K.K. Jayachandran (CPI(M))',UDF:'Senapathy Venu (INC)',NDA:'Sangeetha Viswanathan (BDJS)'},
+  90:{LDF:'Cyriac Chazhikaadan (KC(M))',UDF:'Apu John Joseph (KC)',NDA:'Roy A Varikkadu (TTP)'},
+  91:{LDF:'Roshy Augustine (KC(M))',UDF:'Roy K. Paulose (INC)',NDA:'Pratheesh Prabha (BDJS)'},
+  92:{LDF:'K. Salim Kumar (CPI)',UDF:'Cyriac Thomas (INC)',NDA:'V. Ratheesh (BJP)'},
+  93:{LDF:'Jose K. Mani (KC(M))',UDF:'Mani C. Kappan (Ind)',NDA:'Shone George (BJP)'},
+  94:{LDF:'Nirmala Jimmy (KC(M))',UDF:'Mons Joseph (KC)',NDA:'Suresh Ettikunnel (BDJS)'},
+  95:{LDF:'N. Jayaraj (KC(M))',UDF:'Rony K. Baby (INC)',NDA:'George Kurian (BJP)'},
+  96:{LDF:'Sebastian Kulathunkal (KC(M))',UDF:'Sebastian M.J. (INC)',NDA:'P.C. George (BJP)'},
+  97:{LDF:'V.N. Vasavan (CPI(M))',UDF:'Nattakom Suresh (INC)',NDA:'Athira D Nair (TTP)'},
+  98:{LDF:'K. Anilkumar (CPI(M))',UDF:'Thiruvanchoor Radhakrishnan (INC)',NDA:'P. Anilkumar (BDJS)'},
+  99:{LDF:'K.M. Radhakrishnan (CPI(M))',UDF:'Chandy Oommen (INC)',NDA:'Ravindranath Vakathanam (BJP)'},
+  100:{LDF:'P. Pradeep (CPI)',UDF:'K. Binimon (INC)',NDA:'K. Ajith (BJP)'},
+  101:{LDF:'Job Michael (KC(M))',UDF:'Vinu Job (KC(J))',NDA:'B. Radhakrishna Menon (BJP)'},
+  102:{LDF:'V.K. Prasanth (CPI(M))',UDF:'K. Muraleedharan (INC)',NDA:'R. Sreelekha (BJP)'},
+  103:{LDF:'Daleema (CPI(M))',UDF:'Shanimol Usman (INC)',NDA:'P.S. Jyothis (BDJS)'},
+  104:{LDF:'P. Prasad (CPI)',UDF:'K.R. Rajendra Prasad (INC)',NDA:'T.P. Anantharaj (BDJS)'},
+  105:{LDF:'H. Salam (CPI(M))',UDF:'G. Sudhakaran (Ind-UDF)',NDA:'Arun Anirudhan (BJP)'},
+  106:{LDF:'P.P. Chitharanjan (CPI(M))',UDF:'A.D. Thomas (INC)',NDA:'M.J. Job (BJP)'},
+  107:{LDF:'Thomas K. Thomas (NCP-SP)',UDF:'Reji Cheriyan (KC)',NDA:'Santhosh Santhy (BDJS)'},
+  108:{LDF:'T.T. Jismon (CPI)',UDF:'Ramesh Chennithala (INC)',NDA:'Sandeep Vachaspati (BJP)'},
+  109:{LDF:'U. Prathibha (CPI(M))',UDF:'M. Liju (INC)',NDA:'Thambi Mettuthara (BDJS)'},
+  110:{LDF:'M.S. Arun Kumar (CPI(M))',UDF:'Muthara Raj (INC)',NDA:'Ajimon (BJP)'},
+  111:{LDF:'Saji Cherian (CPI(M))',UDF:'Eby Kuriakose (INC)',NDA:'M.V. Gopakumar (BJP)'},
+  112:{LDF:'Mathew T. Thomas (ISJD)',UDF:'Varghese Mammen (KC)',NDA:'Anoop Antony (BJP)'},
+  113:{LDF:'Pramod Narayanan (KC(M))',UDF:'Pazhakulam Madhu (INC)',NDA:'Thomas K. Samuel (TTP)'},
+  114:{LDF:'Veena George (CPI(M))',UDF:'Abin Varkey (INC)',NDA:'Kummanam Rajasekharan (BJP)'},
+  115:{LDF:'K.U. Jenish Kumar (CPI(M))',UDF:'Satheesh Kochuparambil (INC)',NDA:'T.P. Sundareshan (BDJS)'},
+  116:{LDF:'Praji Sashidharan (CPI)',UDF:'Santhakumar (INC)',NDA:'Pandalam Prathapan (BJP)'},
+  117:{LDF:'C.K. Hareendran (CPI(M))',UDF:'Neyyattinkara Sanal (INC)',NDA:'Karamana Jayan (BJP)'},
+  118:{LDF:'M.S. Thara (CPI)',UDF:'C.R. Mahesh (INC)',NDA:'V.S. Jithin Dev (BJP)'},
+  119:{LDF:'Sujith Vijayanpillai (Ind-LDF)',UDF:'Shibu Baby John (RSP)',NDA:'K.R. Rajesh (BJP)'},
+  120:{LDF:'S.L. Sajikumar (CPI(M))',UDF:'P.C. Vishnunadh (INC)',NDA:'Robin Radhakrishnan (BJP)'},
+  121:{LDF:'K.N. Balagopal (CPI(M))',UDF:'P. Aisha Potty (INC)',NDA:'R. Reshmi (BJP)'},
+  122:{LDF:'Kovoor Kunjumon (RSP-L)',UDF:'Ullas Kovoor (RSP)',NDA:'Raji Prasad (BJP)'},
+  123:{LDF:'K.B. Ganesh Kumar (KC(B))',UDF:'Jyothikumar Chamakkala (INC)',NDA:'Anil Kumar S (TTP)'},
+  124:{LDF:'C. Ajaya Prasad (CPI)',UDF:'Noushad Yunus (IUML)',NDA:'B. Raghunathan Pillai (TTP)'},
+  125:{LDF:'J. Chinchu Rani (CPI)',UDF:'M.M. Nazeer (INC)',NDA:'R.S. Arun Raj (BJP)'},
+  126:{LDF:'M. Noushad (CPI(M))',UDF:'Vishnu Mohan (RSP)',NDA:'Saji D Anand (BDJS)'},
+  127:{LDF:'S. Jayamohan (CPI(M))',UDF:'Bindhu Krishna (INC)',NDA:'N. Prathap Kumar (BJP)'},
+  128:{LDF:'R. Rajendran (CPI)',UDF:'Sooraj Ravi (INC)',NDA:'B.B. Gopakumar (BJP)'},
+  129:{LDF:'O.S. Ambika (CPI(M))',UDF:'Santhosh Bhadran (RSP)',NDA:'P. Sudheer (BJP)'},
+  130:{LDF:'V. Joy (CPI(M))',UDF:'Varkala Kahar (INC)',NDA:'K. Sureshkumar (BJP)'},
+  131:{LDF:'Manoj B. Idamana (CPI)',UDF:'Ramya Haridas (INC)',NDA:'B.S. Anoop (BJP)'},
+  132:{LDF:'G.R. Anil (CPI)',UDF:'Meenankal Kumar (INC)',NDA:'T. Premkumar (BJP)'},
+  133:{LDF:'D.K. Murali (CPI(M))',UDF:'Sudheersha Palode (INC)',NDA:'M. Gangadharan (BJP)'},
+  134:{LDF:'I.B. Sathish (CPI(M))',UDF:'M.R. Baiju (INC)',NDA:'P.K. Krishnadas (BJP)'},
+  135:{LDF:'Kadakampally Surendran (CPI(M))',UDF:'Sarathchandra Prasad (INC)',NDA:'V. Muraleedharan (BJP)'},
+  136:{LDF:'Sudheer Karamana (Ind-LDF)',UDF:'C.P. John (CMP)',NDA:'S. Suresh (BJP)'},
+  137:{LDF:'V. Sivankutty (CPI(M))',UDF:'K.S. Sabarinadhan (INC)',NDA:'Rajeev Chandrasekhar (BJP)'},
+  138:{LDF:'G. Steephen (CPI(M))',UDF:'V.S. Sivakumar (INC)',NDA:'Vivek Gopan (BJP)'},
+  139:{LDF:'M. Vincent (INC)',UDF:'M. Vincent (INC)',NDA:'T.N. Suresh (BJP)'},
+  140:{LDF:'K. Ancelan (CPI(M))',UDF:'N. Sakthan (INC)',NDA:'S. Rajasekharan Nair (BJP)'}
+};
+
+// Alliance composition legend
+var ALLIANCE_INFO={
+  LDF:{color:'var(--ldf)',parties:'CPI(M), CPI, KC(M), NCP, LJD, INL, Con(S), JD(S) & allies'},
+  UDF:{color:'var(--udf)',parties:'INC, IUML, KC, KC(J), RMPI & allies'},
+  NDA:{color:'var(--nda)',parties:'BJP, BDJS, 20-20 & allies'},
+  Others:{color:'var(--oth)',parties:'Independent & other parties'}
+};
 
 var lockStatus=false;
 var compareCache={};
@@ -531,6 +685,7 @@ function switchTab(tab){
   var tc=document.getElementById('tc');
   if(tc){
     tc.innerHTML=tabContent();
+    if(tab==='results')loadResults();
     if(tab==='allpred')loadAllPred();
     if(tab==='analytics')loadAnalytics();
     if(tab==='leaderboard')loadLeaderboard();
@@ -576,7 +731,7 @@ function authHTML(){
 function appHTML(){
   var tabs=S.isAdmin
     ?[['admin-users','Players'],['actual-results','Actual Results'],['allpred','All Predictions'],['analytics','Analytics'],['leaderboard','Leaderboard']]
-    :[['predict','My Predictions'],['allpred','All Predictions'],['analytics','Analytics'],['leaderboard','Leaderboard']];
+    :[['predict','My Predictions'],['results','Results'],['allpred','All Predictions'],['analytics','Analytics'],['leaderboard','Leaderboard']];
   return '<div class="topbar">'+
     '<div><div class="topbar-title">🗳️ Kerala Predictor</div><div class="topbar-sub">2026 Assembly Election</div></div>'+
     '<div style="display:flex;align-items:center;gap:6px">'+
@@ -591,6 +746,9 @@ function appHTML(){
 
 function tabContent(){
   if(S.tab==='predict')return predictHTML();
+  if(S.tab==='results')return '<div class="wrap"><div id="results-content" class="loading">Loading...</div></div>';
+  if(S.tab==='results')return '<div class="wrap"><div id="results-content" class="loading">Loading...</div></div>';
+    if(S.tab==='results')return '<div class="wrap"><div id="results-content" class="loading">Loading...</div></div>';
   if(S.tab==='allpred')return '<div class="wrap">'+(S.isAdmin?'<div class="csv-bar"><a class="csv-btn" href="/api/admin/csv/predictions">⬇ Predictions CSV</a></div>':'')+' <div id="ap-list" class="loading">Loading...</div></div>';
   if(S.tab==='analytics')return '<div class="wrap"><div class="notice notice-info">Expand any player to compare predictions vs actual results. Use the compare dropdown to diff two players.</div>'+(S.isAdmin?'<div class="csv-bar"><a class="csv-btn" href="/api/admin/csv/leaderboard">⬇ Leaderboard CSV</a></div>':'')+' <div id="an-list" class="loading">Loading...</div></div>';
   if(S.tab==='leaderboard')return '<div class="wrap"><div class="notice notice-info">🏆 Ranked by strike rate (correct ÷ 140 × 100%). Updates as actual results are entered.</div>'+(S.isAdmin?'<div class="csv-bar"><a class="csv-btn" href="/api/admin/csv/leaderboard">⬇ Leaderboard CSV</a></div>':'')+' <div id="lb-content" class="loading">Loading...</div></div>';
@@ -639,7 +797,13 @@ function predictHTML(){
       rows+='<div class="crow">'+
         '<span class="cnum">'+s.id+'</span>'+
         '<div class="cinfo"><div class="cname">'+s.name+'</div>'+
-        '<div class="cmla">'+s.mla+'<span class="mpill mp-'+PC[s.party]+'">'+s.party+'</span></div></div>'+
+        '<div class="cmla"><span style="font-size:10px;color:var(--tx3);font-weight:500">Sitting MLA: </span>'+s.mla+' <span style="font-size:10px;color:var(--tx3)">('+( SUBPARTY_MAP[s.id]||s.party )+')</span><span class="mpill mp-'+PC[s.party]+'">'+s.party+'</span></div></div>'+
+        '<div style="width:100%;margin-top:4px;font-size:9.5px;line-height:1.7;display:flex;flex-direction:column;gap:1px">'+
+          (CANDIDATES_2026[s.id]?
+            '<span style="color:var(--ldf)">🔴 '+( CANDIDATES_2026[s.id].LDF||'—' )+'</span>'+
+            '<span style="color:var(--udf)">🔵 '+( CANDIDATES_2026[s.id].UDF||'—' )+'</span>'+
+            '<span style="color:var(--nda)">🟠 '+( CANDIDATES_2026[s.id].NDA||'—' )+'</span>':'')+
+        '</div>'+
         '<div class="pbtns">'+btns+'</div>'+
         '<span class="sind" id="si-'+s.id+'"></span>'+
       '</div>';
@@ -661,6 +825,17 @@ function predictHTML(){
     '<span style="font-size:12px;color:var(--udf)">Loading Kerala election news...</span>'+
     '</div></div></div>'+
     '<div class="wrap">'+lockBanner+
+    '<div style="background:var(--sur);border:1px solid var(--bd);border-radius:var(--rl);padding:10px 14px;margin-bottom:.75rem">'+
+    '<div style="font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px">Alliance Guide</div>'+
+    '<div style="display:flex;flex-direction:column;gap:5px">'+
+      Object.entries(ALLIANCE_INFO).map(function(e){
+        return '<div style="display:flex;gap:6px;align-items:flex-start">'+
+          '<span class="mpill mp-'+PC[e[0]]+'" style="flex-shrink:0;margin-top:1px">'+e[0]+'</span>'+
+          '<span style="font-size:11px;color:var(--tx2)">'+e[1].parties+'</span>'+
+        '</div>';
+      }).join('')+
+    '</div>'+
+    '</div>'+
     '<div class="prog-card">'+
       '<div class="prog-top"><span style="font-size:13px;font-weight:600">Your predictions</span>'+
       '<span style="font-size:13px;font-weight:700;color:var(--grn)" id="pcnt">'+count+' / 140</span></div>'+
@@ -1159,7 +1334,7 @@ function loadActualResults(){
         rows+='<div class="crow">'+
           '<span class="cnum">'+s.id+'</span>'+
           '<div class="cinfo"><div class="cname">'+s.name+'</div>'+
-          '<div class="cmla">2021: '+s.mla+'<span class="mpill mp-'+PC[s.party]+'">'+s.party+'</span></div></div>'+
+          '<div class="cmla"><span style="font-size:10px;color:var(--tx3);font-weight:500">Sitting MLA (2021): </span>'+s.mla+'<span class="mpill mp-'+PC[s.party]+'">'+s.party+'</span></div></div>'+
           '<div class="pbtns">'+btns+'</div>'+
           '<span class="sind" id="ar-si-'+s.id+'"></span>'+
         '</div>';
@@ -1218,6 +1393,70 @@ function setActual(cid,party){
 function clearAllResults(){
   if(!confirm('Clear ALL 140 results? Strike rates will reset.'))return;
   api('POST','/api/results/clear-all',{},function(r){if(r.success)loadActualResults();else alert('Error');});
+}
+
+function loadResults(){
+  api('GET','/api/results/actual',null,function(ar){
+    var el=document.getElementById('results-content');
+    if(!el)return;
+    var actual=ar.success?ar.results:{};
+    var filled=Object.keys(actual).length;
+
+    if(!filled){
+      el.innerHTML='<div class="notice notice-info">📋 No results have been entered yet. Check back after the election on April 9, 2026.</div>';
+      return;
+    }
+
+    // tally
+    var counts={LDF:0,UDF:0,NDA:0,Others:0};
+    Object.values(actual).forEach(function(p){counts[p]=(counts[p]||0)+1;});
+
+    var blocks='';
+    DISTRICTS.forEach(function(d){
+      var rows='';
+      d.seats.forEach(function(s){
+        var winner=actual[s.id];
+        if(!winner)return; // skip unannounced
+        var cands=CANDIDATES_2026[s.id]||{};
+        var winnerName=cands[winner]||'—';
+        var pill='<span class="ppill pp-'+PC[winner]+'">'+winner+'</span>';
+        rows+='<div class="crow" style="'+(winner?'background:var(--'+PC[winner]+'-bg)':'')+'">'+
+          '<span class="cnum">'+s.id+'</span>'+
+          '<div class="cinfo">'+
+            '<div class="cname">'+s.name+'</div>'+
+            '<div class="cmla" style="font-size:11px;margin-top:2px">'+
+              '<span style="font-weight:600;color:var(--'+PC[winner]+')">'+winnerName+'</span>'+
+            '</div>'+
+          '</div>'+
+          pill+
+        '</div>';
+      });
+      if(!rows)return; // skip districts with no results yet
+      var distFilled=d.seats.filter(function(s){return actual[s.id];}).length;
+      blocks+='<div style="font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:.06em;text-transform:uppercase;'+
+        'background:var(--sur2);border:1px solid var(--bd);border-radius:var(--r) var(--r) 0 0;padding:8px 12px;margin-top:.5rem">'+
+        d.name+'<span style="font-weight:400;color:var(--tx3);margin-left:8px">'+distFilled+'/'+d.seats.length+' declared</span>'+
+        '</div>'+
+        '<div style="border:1px solid var(--bd);border-top:none;border-radius:0 0 var(--r) var(--r);overflow:hidden;margin-bottom:.25rem">'+rows+'</div>';
+    });
+
+    el.innerHTML=
+      '<div class="prog-card" style="margin-bottom:.75rem">'+
+        '<div class="prog-top">'+
+          '<span style="font-size:13px;font-weight:600">📊 Results declared: '+filled+' / 140</span>'+
+        '</div>'+
+        '<div class="pbar"><div class="pbar-f" style="width:'+Math.round(filled/140*100)+'%"></div></div>'+
+        '<div class="tally">'+
+          '<div class="ti ti-ldf"><div class="tl">LDF</div><div class="tn">'+counts.LDF+'</div></div>'+
+          '<div class="ti ti-udf"><div class="tl">UDF</div><div class="tn">'+counts.UDF+'</div></div>'+
+          '<div class="ti ti-nda"><div class="tl">NDA</div><div class="tn">'+counts.NDA+'</div></div>'+
+          '<div class="ti ti-oth"><div class="tl">Others</div><div class="tn">'+counts.Others+'</div></div>'+
+        '</div>'+
+      '</div>'+
+      (filled<140?'<div class="notice notice-info" style="margin-bottom:.75rem">⏳ Results are being updated live as they are declared.</div>':
+        '<div class="notice notice-grn" style="margin-bottom:.75rem">✅ All 140 results declared. Election complete!</div>')+
+      blocks;
+  });
 }
 
 function downloadActualTemplate(){
